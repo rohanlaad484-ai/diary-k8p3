@@ -375,7 +375,7 @@
     </div>
       </div>
     </div>
-    <div class="tapnote" id="tapNote">👆 Tap karke kholo</div>
+    <div class="tapnote" id="tapNote">👆 Tap to open</div>
   </div>
 
   <!-- MAIN APP -->
@@ -401,12 +401,12 @@
     <div id="tab-list">
       <div id="banners"></div>
       <button class="todaycard" id="todayCard">
-        <small>Aaj ka sawaal</small>
+        <small>Today's question</small>
         <b id="prompt"></b>
-        <span>✍️ Likhna shuru karo</span>
+        <span>✍️ Start writing</span>
       </button>
       <div class="quick">
-        <button class="qtile" id="qLine"><small>📅 Roz ek line</small><b id="qLineTxt"></b></button>
+        <button class="qtile" id="qLine"><small>📅 One line a day</small><b id="qLineTxt"></b></button>
         <button class="qtile" id="qDates"><small>⏳ Dates</small><b id="qDatesTxt"></b></button>
       </div>
       <div class="stats" id="stats"></div>
@@ -415,8 +415,8 @@
       <div class="chips" id="nbChips"></div>
       <input id="search" type="search" placeholder="Search pages aur lines…">
       <div class="filters">
-        <select id="fMonth" aria-label="Month"><option value="">Saare mahine</option></select>
-        <select id="fRate" aria-label="Kind of day"><option value="">Har tarah ke din</option><option value="good">😊 Achhe din (8+)</option><option value="tough">😔 Mushkil din (1–4)</option></select>
+        <select id="fMonth" aria-label="Month"><option value="">All months</option></select>
+        <select id="fRate" aria-label="Kind of day"><option value="">All days</option><option value="good">😊 Good days (8+)</option><option value="tough">😔 Tough days (1–4)</option></select>
       </div>
       <div class="list" id="lineHits"></div>
       <div class="list" id="list"></div>
@@ -551,7 +551,7 @@
         <section>
           <h2>App</h2>
           <div class="row" id="installRow"></div>
-          <div class="row"><button id="tourBtn">✨ Tour dobara dekho</button></div>
+          <div class="row"><button id="tourBtn">✨ Show the tour again</button></div>
         </section>
         <section>
           <h2>Recently deleted</h2>
@@ -599,7 +599,7 @@
             <input type="file" id="importFile" accept=".json,application/json" hidden>
           </div>
           <div class="row form" id="rsBox" hidden>
-            <span class="sub" style="flex:1 1 100%">Yeh backup locked hai. Uska password daalo:</span>
+            <span class="sub" style="flex:1 1 100%">This backup is locked. Enter its password:</span>
             <input id="rsPw" type="password" placeholder="Backup password" autocomplete="off" style="flex:1 1 160px;width:auto">
             <button class="primary" id="rsGo">Restore</button>
           </div>
@@ -616,14 +616,14 @@
           </div>
         </section>
         <section>
-          <h2>Diary reset karo</h2>
-          <div class="sub">Is phone se saare pages, lines, photos, voice notes, dates, secret room aur PIN hamesha ke liye mit jayenge, aur diary bilkul nayi khulegi. Yeh wapas nahi hota, chaho to pehle backup le lo.</div>
-          <div class="row"><button class="danger" id="rstBtn">Sab kuch mitao</button></div>
+          <h2>Reset diary</h2>
+          <div class="sub">This permanently erases all pages, lines, photos, voice notes, dates, the secret room and the PIN from this phone, and the diary starts fresh. This cannot be undone, so take a backup first if you want one.</div>
+          <div class="row"><button class="danger" id="rstBtn">Erase everything</button></div>
           <div class="row form" id="rstBox" hidden>
-            <input id="rstPin" type="password" inputmode="numeric" maxlength="6" placeholder="Apna PIN" autocomplete="off" style="flex:1 1 120px;width:auto">
-            <input id="rstWord" placeholder="RESET likho" autocomplete="off" style="flex:1 1 120px;width:auto">
-            <button class="primary" id="rstGo">Haan, mitao</button>
-            <button class="ghost" id="rstNo">Rehne do</button>
+            <input id="rstPin" type="password" inputmode="numeric" maxlength="6" placeholder="Your PIN" autocomplete="off" style="flex:1 1 120px;width:auto">
+            <input id="rstWord" placeholder="Type RESET" autocomplete="off" style="flex:1 1 120px;width:auto">
+            <button class="primary" id="rstGo">Yes, erase</button>
+            <button class="ghost" id="rstNo">Cancel</button>
           </div>
         </section>
       </div>
@@ -638,7 +638,7 @@
       </div>
       <input id="edTitle" class="titlein" placeholder="Title for today…" maxlength="120">
       <div class="rate">
-        <label for="edRateIn">Din kaisa tha?</label>
+        <label for="edRateIn">How was your day?</label>
         <input type="range" id="edRateIn" min="0" max="10" step="1" value="0">
         <b id="edRateVal">–</b>
       </div>
@@ -669,8 +669,8 @@
         </div>
         <div class="stkpal" id="stkPal" hidden></div>
         <div class="tbpanel" id="morePal" hidden>
-          <label class="pl" for="speakLang">🗣️ Bolne ki bhasha</label>
-          <select id="speakLang"><option value="hi-IN">हिंदी</option><option value="en-IN">English</option></select>
+          <label class="pl" for="speakLang">🗣️ Speaking language</label>
+          <select id="speakLang"><option value="en-IN">English</option><option value="hi-IN">हिंदी</option></select>
           <label class="pl" for="ambSel">🎧 Sound</label>
           <select id="ambSel">
             <option value="">Off</option><option value="rain">🌧️ Rain</option><option value="ocean">🌊 Ocean</option><option value="cafe">☕ Café</option>
@@ -712,11 +712,11 @@
     <div class="tico" id="tIco"></div>
     <h2 id="tTitle"></h2>
     <p id="tText"></p>
-    <input id="tName" maxlength="30" placeholder="Apna naam likho" autocomplete="given-name" hidden>
+    <input id="tName" maxlength="30" placeholder="Your name" autocomplete="given-name" hidden>
     <div class="tdots" id="tDots"></div>
     <div class="row" style="justify-content:space-between">
       <button class="ghost" id="tSkip">Skip</button>
-      <button class="primary" id="tNext">Aage ›</button>
+      <button class="primary" id="tNext">Next ›</button>
     </div>
   </div>
 </div>
@@ -730,23 +730,23 @@
     <input id="rmPin" type="password" inputmode="numeric" maxlength="8" placeholder="Secret PIN" autocomplete="off">
     <input id="rmPin2" type="password" inputmode="numeric" maxlength="8" placeholder="Same PIN again" autocomplete="off" hidden>
     <div class="msg" id="rmMsg"></div>
-    <button class="primary" id="rmGo">Andar chalo</button>
-    <button class="ghost" id="rmBack">‹ Wapas diary pe</button>
+    <button class="primary" id="rmGo">Go inside</button>
+    <button class="ghost" id="rmBack">‹ Back to diary</button>
   </div>
   <div id="roomMain" hidden>
     <header>
-      <div><div class="hello">Sirf tumhare liye 🤫</div><h1>Secret room</h1></div>
+      <div><div class="hello">Just for you 🤫</div><h1>Secret room</h1></div>
       <button class="iconbtn" id="rmLock" aria-label="Leave secret room">🔒</button>
     </header>
-    <button class="todaycard" id="rmNew"><small>Raaz ki baat</small><b>Kuch likhna hai jo kisi ko nahi batana?</b><span>✍️ Naya secret page</span></button>
+    <button class="todaycard" id="rmNew"><small>A secret</small><b>Something you want to tell no one?</b><span>✍️ New secret page</span></button>
     <div class="list" id="rmList"></div>
     <div class="card editor" id="rmEd" hidden>
       <input id="rmTitle" class="titlein" placeholder="Title…" maxlength="120">
-      <textarea id="rmText" class="rmtext" placeholder="Yahan jo likhogi, woh sirf is room ke PIN se khulega…"></textarea>
+      <textarea id="rmText" class="rmtext" placeholder="Whatever you write here opens only with this room's PIN…"></textarea>
       <div id="rmDelConfirm" class="confirm" hidden>
-        <span>Yeh secret page hamesha ke liye delete karna hai?</span>
-        <button class="primary" id="rmDelYes">Haan, delete</button>
-        <button id="rmDelNo">Nahi</button>
+        <span>Delete this secret page forever?</span>
+        <button class="primary" id="rmDelYes">Yes, delete</button>
+        <button id="rmDelNo">Keep it</button>
       </div>
       <div class="actions">
         <button class="danger" id="rmDel">Delete</button>
@@ -1051,8 +1051,8 @@
     document.querySelectorAll('#pinLenRow [data-len]').forEach(b=>b.onclick=()=>{newLen=+b.dataset.len;pinBuf='';refreshLock()});
     if(!HAS_CRYPTO){
       $('pad').hidden=true;$('dots').hidden=true;$('forgotBtn').hidden=true;
-      $('lockTitle').textContent='Is browser me diary safe tareeke se nahi khul sakti.';
-      $('lockMsg').textContent='Isko diary ke website link se Chrome ya Safari me kholo.';
+      $('lockTitle').textContent='This browser cannot open the diary safely.';
+      $('lockMsg').textContent='Please open the diary from its website link in Chrome or Safari.';
       return;
     }
     refreshLock();
@@ -1060,8 +1060,8 @@
   function refreshLock(){
     if(!HAS_CRYPTO)return;
     const n=pinLen();
-    $('lockTitle').textContent=busy?'Diary khul rahi hai… 🔐':mode==='enter'?'Enter your PIN':mode==='create'?'Create a '+n+'-digit PIN':'Enter the PIN again';
-    $('lockHint').textContent=mode==='enter'?'':mode==='create'?'6 digit sabse safe hai. Is PIN ke bina diary koi nahi padh sakta.':'';
+    $('lockTitle').textContent=busy?'Opening your diary… 🔐':mode==='enter'?'Enter your PIN':mode==='create'?'Create a '+n+'-digit PIN':'Enter the PIN again';
+    $('lockHint').textContent=mode==='enter'?'':mode==='create'?'6 digits is the safest. Nobody can read the diary without this PIN.':'';
     $('pinLenRow').hidden=mode!=='create';
     document.querySelectorAll('#pinLenRow [data-len]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.len===newLen));
     const D=$('dots');if(D.children.length!==n){D.innerHTML='';for(let i=0;i<n;i++)D.appendChild(document.createElement('span'))}
@@ -1075,7 +1075,7 @@
   function gwait(n){return Math.max(0,Math.ceil((gget(n).u-Date.now())/1000))}
   function gfail(n){const x=gget(n);x.f++;if(x.f>=5)x.u=Date.now()+Math.min(30e3*Math.pow(2,x.f-5),15*60e3);gset(n,x);return x}
   function gok(n){gset(n,{f:0,u:0})}
-  const waitText=s=>'Bahut galat try ho gaye. '+(s>=60?Math.ceil(s/60)+' min':s+' sec')+' baad try karo.';
+  const waitText=s=>'Too many wrong tries. Try again in '+(s>=60?Math.ceil(s/60)+' min':s+' sec')+'.';
   setInterval(()=>{if(!$('lock').hidden&&mode==='enter'){const w=gwait('pin');if(w)$('lockMsg').textContent=waitText(w)}},1000);
 
   // forgot PIN → the secret answer can open the data key, then a new PIN is set
@@ -1088,22 +1088,22 @@
   const recQ=()=>vault&&vault.rec?vault.rec.q:(!vault&&legacySec?legacySec.q:null);
   $('forgotBtn').onclick=()=>{
     const q=recQ();
-    if(!q){$('lockMsg').textContent='Secret question set nahi tha, isliye PIN reset nahi ho sakta.';return}
+    if(!q){$('lockMsg').textContent='No secret question was set, so the PIN cannot be reset.';return}
     $('fqText').textContent=q;showForgot(true);
   };
   $('fqBack').onclick=()=>showForgot(false);
   $('fqGo').onclick=async()=>{
     const w=gwait('pin');if(w){$('lockMsg').textContent=waitText(w);return}
     const a=norm($('fqAns').value);if(!a)return;
-    $('fqGo').disabled=true;$('fqGo').textContent='Check ho raha hai…';
+    $('fqGo').disabled=true;$('fqGo').textContent='Checking…';
     let ok=false;
     try{
       if(vault&&vault.rec){recoverDek=await openKey(a,vault.rec);ok=true}
       else if(!vault&&legacySec&&hash(a)===legacySec.a){recoverDek=null;ok=true}
     }catch(e){ok=false}
     $('fqGo').disabled=false;$('fqGo').textContent='Reset PIN';
-    if(ok){gok('pin');showForgot(false);mode='create';pinBuf='';refreshLock();toast('Sahi jawab! Ab naya PIN banao.')}
-    else{const x=gfail('pin');$('lockMsg').textContent=x.u>Date.now()?waitText(gwait('pin')):'Yeh jawab sahi nahi hai'}
+    if(ok){gok('pin');showForgot(false);mode='create';pinBuf='';refreshLock();toast('Correct! Now create a new PIN.')}
+    else{const x=gfail('pin');$('lockMsg').textContent=x.u>Date.now()?waitText(gwait('pin')):'That answer is not right'}
   };
   $('fqAns').onkeydown=e=>{if(e.key==='Enter')$('fqGo').click()};
 
@@ -1132,13 +1132,13 @@
         authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required',residentKey:'preferred'},timeout:60000,attestation:'none',
         extensions:{prf:{eval:{first:salt}}}}});
       const ext=c.getClientExtensionResults();
-      if(!ext||!ext.prf||ext.prf.enabled===false){toast('Is phone pe fingerprint se diary lock nahi ho sakti. PIN use karo.');return}
+      if(!ext||!ext.prf||ext.prf.enabled===false){toast('This phone cannot lock the diary with a fingerprint. Please use your PIN.');return}
       let out=ext.prf.results&&ext.prf.results.first;
       if(!out)out=await prfGet(new Uint8Array(c.rawId),salt);
-      if(!out){toast('Is phone pe fingerprint se diary lock nahi ho sakti. PIN use karo.');return}
+      if(!out){toast('This phone cannot lock the diary with a fingerprint. Please use your PIN.');return}
       vault.bio=Object.assign({id:b64(c.rawId),salt:b64e(salt)},await wrapWith(await prfKey(out),dek));saveVault();
-      toast('Fingerprint unlock on hai 👆');renderSettings();
-    }catch(e){toast('Fingerprint setup cancel ho gaya')}
+      toast('Fingerprint unlock is on 👆');renderSettings();
+    }catch(e){toast('Fingerprint setup was cancelled')}
   }
   $('bioBtn').onclick=async()=>{
     if(settings.music)ac();
@@ -1149,7 +1149,7 @@
       busy=true;refreshLock();
       dek=await unwrapWith(await prfKey(out),vault.bio);
       await afterUnlock();
-    }catch(e){busy=false;refreshLock();$('lockMsg').textContent='Fingerprint kaam nahi kiya. PIN use karo.'}
+    }catch(e){busy=false;refreshLock();$('lockMsg').textContent='Fingerprint did not work. Please use your PIN.'}
   };
 
   function press(k){
@@ -1172,19 +1172,19 @@
       }catch(e){ok=false;dek=null}
       if(ok){gok('pin');await afterUnlock();return}
       busy=false;const x=gfail('pin');
-      $('lockMsg').textContent=x.u>Date.now()?waitText(gwait('pin')):'Galat PIN'+(x.f>=3?' ('+(5-x.f)+' try baaki)':'')+', dobara try karo';
+      $('lockMsg').textContent=x.u>Date.now()?waitText(gwait('pin')):'Wrong PIN'+(x.f>=3?' ('+(5-x.f)+' tries left)':'')+', try again';
       if(navigator.vibrate)try{navigator.vibrate([60,40,60])}catch(e){}
     }
     else if(mode==='create'){firstPin=pin;mode='confirm'}
     else if(pin===firstPin){
       busy=true;refreshLock();
       try{
-        if(recoverDek){dek=recoverDek;recoverDek=null;vault.pin=await lockKey(pin,dek);vault.len=pin.length;saveVault();toast('Naya PIN set ho gaya ♥')}
+        if(recoverDek){dek=recoverDek;recoverDek=null;vault.pin=await lockKey(pin,dek);vault.len=pin.length;saveVault();toast('New PIN is set ♥')}
         else{firstTime=!vault&&!legacyPin;await makeVault(pin,vault);toast('PIN set ♥')}
         await afterUnlock();return;
-      }catch(e){busy=false;$('lockMsg').textContent='PIN set nahi ho paya. Dobara try karo.';mode='create'}
+      }catch(e){busy=false;$('lockMsg').textContent='Could not set the PIN. Please try again.';mode='create'}
     }
-    else{$('lockMsg').textContent='Dono PIN match nahi hue. Phir se banao.';mode='create'}
+    else{$('lockMsg').textContent='The PINs did not match. Please start again.';mode='create'}
     refreshLock();
   }
   // a brand-new data key (or the old diary's data, locked for the first time)
@@ -1328,11 +1328,11 @@
         ['Later','ghost',()=>{settings.backupSnooze=Date.now();saveSettings();renderBanners()}]]);
   }
   // ---------- home cards ----------
-  const PROMPTS=['Aaj kis baat pe muskurayi?','Aaj ka sabse achha pal kaunsa tha?','Aaj kisne tumhara din banaya?','Aaj kya naya seekha?',
-    'Aaj kis cheez ke liye shukriya kehna chahogi?','Aaj ka din ek gaane me batao 🎵','Aaj kya khaya jo yaad rahega? 😋','Aaj kis baat ne pareshan kiya?',
-    'Kal ke liye ek chhota sa goal?','Aaj khud ki kaunsi baat achhi lagi?','Aaj kisi ko miss kiya?','Agar aaj dobara jee sakti to kya badalti?',
-    'Aaj ka mood ek rang me batao 🎨','Aaj kis baat pe zor se hasi aayi? 😂','Aaj kaunsi chhoti si jeet mili?','Is hafte kya karne ka mann hai?',
-    'Aaj kaunsi baat dil me reh gayi?','Aaj ki ek photo jaisi yaad likho 📷','Abhi is waqt kaisa feel ho raha hai?','Aaj apne aap ko kya advice dogi?'];
+  const PROMPTS=['What made you smile today?','What was the best moment of your day?','Who made your day better today?','What did you learn today?',
+    'What are you thankful for today?','Describe today as a song 🎵','What did you eat today that you will remember? 😋','What bothered you today?',
+    'One small goal for tomorrow?','What did you like about yourself today?','Did you miss someone today?','If you could live today again, what would you change?',
+    'Describe your mood as a colour 🎨','What made you laugh out loud today? 😂','What small win did you have today?','What do you feel like doing this week?',
+    'What stayed in your heart today?','Write a memory from today like a photo 📷','How are you feeling right now?','What advice would you give yourself today?'];
   function todayPrompt(){const d=new Date(),start=new Date(d.getFullYear(),0,1);return PROMPTS[(dayDiff(today0(),start)+d.getFullYear())%PROMPTS.length]}
   function streak(){
     const has=new Set(entries.map(e=>e.date));
@@ -1344,15 +1344,15 @@
   function renderHome(){
     $('prompt').textContent=todayPrompt();
     const t=todayISO(),ln=(lines[t.slice(5)]||{})[t.slice(0,4)];
-    $('qLineTxt').textContent=ln?'“'+ln+'”':'Aaj ki line likho ✍️';
+    $('qLineTxt').textContent=ln?'“'+ln+'”':'Write today\'s line ✍️';
     const nextCd=countdowns.map(c=>({c,k:dayDiff(parseISO(c.date),today0())})).filter(x=>x.k>=0).sort((a,b)=>a.k-b.k)[0];
     const nextD=impDates.map(d=>({d,k:dayDiff(nextOcc(d.date),today0())})).sort((a,b)=>a.k-b.k)[0];
-    $('qDatesTxt').textContent=nextCd&&(!nextD||nextCd.k<=nextD.k)?nextCd.c.emoji+' '+nextCd.c.title+' · '+(nextCd.k===0?'aaj!':nextCd.k+' din')
-      :nextD?dateLabel(nextD.d)+' · '+(nextD.k===0?'aaj!':nextD.k+' din'):'Countdown ya birthday add karo';
+    $('qDatesTxt').textContent=nextCd&&(!nextD||nextCd.k<=nextD.k)?nextCd.c.emoji+' '+nextCd.c.title+' · '+(nextCd.k===0?'today!':plural(nextCd.k,'day'))
+      :nextD?dateLabel(nextD.d)+' · '+(nextD.k===0?'today!':plural(nextD.k,'day')):'Add a countdown or birthday';
     const S=$('stats');S.innerHTML='';
     const st=streak(),fav=entries.filter(e=>e.fav).length;
-    [st?'🔥 '+plural(st,'din')+' streak':'🔥 Aaj se streak shuru karo','📖 '+plural(entries.length,'page'),fav?'⭐ '+fav+' favourite':''].filter(Boolean).forEach(x=>{
-      const s=document.createElement('span');s.textContent=x.replace(/ dins /,' din ').replace(/dins/,'din');S.appendChild(s);
+    [st?'🔥 '+plural(st,'day')+' streak':'🔥 Start a streak today','📖 '+plural(entries.length,'page'),fav?'⭐ '+fav+' favourite':''].filter(Boolean).forEach(x=>{
+      const s=document.createElement('span');s.textContent=x;S.appendChild(s);
     });
   }
   $('todayCard').onclick=()=>{const p=todayPrompt();openEditor(null);$('edBody').dataset.ph=p+' …';$('edBody').focus()};
@@ -1365,7 +1365,7 @@
     const q=$('search').value.trim().toLowerCase(),fm=$('fMonth').value,fr=$('fRate').value;
     // month list from the pages that exist
     const months=[...new Set(entries.map(e=>e.date.slice(0,7)))].sort().reverse(),M=$('fMonth');
-    M.innerHTML='<option value="">Saare mahine</option>';
+    M.innerHTML='<option value="">All months</option>';
     months.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=parseISO(m+'-01').toLocaleDateString(undefined,{month:'long',year:'numeric'});M.appendChild(o)});
     M.value=months.includes(fm)?fm:'';
     const items=sorted(entries).filter(e=>(nbFilter==='all'||(nbFilter==='fav'?e.fav:e.notebook===nbFilter))
@@ -1379,7 +1379,7 @@
       Object.entries(lines).forEach(([md,ys])=>Object.entries(ys||{}).forEach(([y,v])=>{if(v&&v.toLowerCase().includes(q)&&(!M.value||(y+'-'+md).startsWith(M.value)))hits.push([y+'-'+md,v])}));
       hits.sort((a,b)=>b[0].localeCompare(a[0])).slice(0,8).forEach(([d,v])=>{
         const b=document.createElement('button');b.className='linehit';
-        const s=document.createElement('small');s.textContent='📅 Roz ek line · '+niceDate(d,{day:'numeric',month:'short',year:'numeric'});
+        const s=document.createElement('small');s.textContent='📅 One line a day · '+niceDate(d,{day:'numeric',month:'short',year:'numeric'});
         const t=document.createElement('span');t.textContent=v;b.append(s,t);
         b.onclick=()=>{olDate=d;showTab('oneline')};H.appendChild(b);
       });
@@ -1387,7 +1387,7 @@
     const L=$('list');L.innerHTML='';
     if(!items.length){
       if(H.children.length)return;
-      L.innerHTML=(q||M.value||fr)?'<div class="empty"><b>Kuch nahi mila</b>Koi aur word ya filter try karo.</div>'
+      L.innerHTML=(q||M.value||fr)?'<div class="empty"><b>Nothing found</b>Try another word or filter.</div>'
         :nbFilter==='fav'?'<div class="empty"><b>No favourites yet</b>Open a page and tap ☆.</div>'
         :'<div class="empty"><b>Your first page is waiting</b>Tap ＋ and write about today.</div>';
       return;
@@ -1537,7 +1537,7 @@
     if(!q||!a){toast('Write both a question and an answer');return}
     $('secSave').disabled=true;
     lockKey(a,dek).then(o=>{vault.rec=Object.assign({q},o);saveVault();$('secA').value='';toast('Secret question saved 🔐');renderSettings()})
-      .catch(()=>toast('Save nahi hua, dobara try karo')).finally(()=>{$('secSave').disabled=false});
+      .catch(()=>toast('Could not save, please try again')).finally(()=>{$('secSave').disabled=false});
   };
   let installEvt=null;
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(curTab==='settings')renderSettings()});
@@ -1627,10 +1627,10 @@
     }
   };
   $('savePin').onclick=()=>{
-    const p=$('newPin').value;if(!/^(\d{4}|\d{6})$/.test(p)){toast('PIN 4 ya 6 digit ka hona chahiye');return}
+    const p=$('newPin').value;if(!/^(\d{4}|\d{6})$/.test(p)){toast('The PIN must be 4 or 6 digits');return}
     $('savePin').disabled=true;
-    lockKey(p,dek).then(o=>{vault.pin=o;vault.len=p.length;saveVault();$('newPin').value='';toast('Naya PIN save ho gaya 🔐')})
-      .catch(()=>toast('PIN save nahi hua')).finally(()=>{$('savePin').disabled=false});
+    lockKey(p,dek).then(o=>{vault.pin=o;vault.len=p.length;saveVault();$('newPin').value='';toast('New PIN saved 🔐')})
+      .catch(()=>toast('Could not save the PIN')).finally(()=>{$('savePin').disabled=false});
   };
 
   // ---------- printed book ----------
@@ -1752,7 +1752,7 @@
     if(e)snack('Page deleted',()=>{
       trash=trash.filter(t=>t.entry.id!==e.id);save(K.trash,trash);
       if(!entries.some(x=>x.id===e.id)){entries.push(e);persist()}
-      toast('Page wapas aa gaya');showTab(curTab);
+      toast('Page restored');showTab(curTab);
     });
   };
 
@@ -1998,7 +1998,7 @@
     lbList.splice(lbIdx,1);
     if(!lbList.length)closeLb();else{lbIdx=Math.min(lbIdx,lbList.length-1);showLb()}
     renderGallery();
-    snack('Photo deleted',async()=>{try{await idb.put('photos',copy);toast('Photo wapas aa gayi')}catch(e){}renderGallery()});
+    snack('Photo deleted',async()=>{try{await idb.put('photos',copy);toast('Photo restored')}catch(e){}renderGallery()});
   };
 
   // ---------- copy with photos ----------
@@ -2014,9 +2014,9 @@
   // ---------- backup (locked with its own password) ----------
   $('exportBtn').onclick=async()=>{
     const pw=$('bkPw').value;
-    if(pw.length<6){toast('Backup password kam se kam 6 letters ka rakho');$('bkPw').focus();return}
-    if(pw!==$('bkPw2').value){toast('Dono passwords match nahi hue');$('bkPw2').focus();return}
-    $('exportBtn').disabled=true;toast('Backup ban raha hai… 🔐');
+    if(pw.length<6){toast('The backup password needs at least 6 characters');$('bkPw').focus();return}
+    if(pw!==$('bkPw2').value){toast('The passwords do not match');$('bkPw2').focus();return}
+    $('exportBtn').disabled=true;toast('Creating backup… 🔐');
     try{
       await flush();await loadPhotos();
       let audio=[];
@@ -2025,8 +2025,8 @@
       const salt=rand(16),key=await kekFrom(pw,salt,ITER),{iv,ct}=await encB(te.encode(JSON.stringify(data)),key);
       download(JSON.stringify({app:'my-diary',version:5,locked:true,salt:b64e(salt),iter:ITER,iv:b64e(iv),ct:b64e(ct)}),'my-diary-backup-'+todayISO()+'.json','application/json');
       $('bkPw').value='';$('bkPw2').value='';
-      settings.lastBackup=Date.now();saveSettings();toast('Locked backup download ho gaya 🔐');if(curTab==='list')renderBanners();
-    }catch(e){toast('Backup nahi ban paya')}
+      settings.lastBackup=Date.now();saveSettings();toast('Locked backup downloaded 🔐');if(curTab==='list')renderBanners();
+    }catch(e){toast('Could not create the backup')}
     $('exportBtn').disabled=false;
   };
   $('importBtn').onclick=()=>$('importFile').click();
@@ -2035,7 +2035,7 @@
     const f=ev.target.files[0];if(!f)return;const r=new FileReader();
     r.onload=async()=>{
       ev.target.value='';
-      let data;try{data=JSON.parse(r.result)}catch(e){toast('Yeh diary ka backup nahi hai');return}
+      let data;try{data=JSON.parse(r.result)}catch(e){toast('That file is not a diary backup');return}
       if(data&&data.locked){lockedFile=data;$('rsBox').hidden=false;$('rsPw').value='';$('rsPw').focus();return}
       importData(data);
     };
@@ -2043,13 +2043,13 @@
   };
   $('rsGo').onclick=async()=>{
     if(!lockedFile)return;
-    $('rsGo').disabled=true;$('rsGo').textContent='Khul raha hai…';
+    $('rsGo').disabled=true;$('rsGo').textContent='Opening…';
     try{
       const key=await kekFrom($('rsPw').value,b64d(lockedFile.salt),lockedFile.iter||ITER);
       const data=JSON.parse(tdc.decode(await decB(b64d(lockedFile.iv),b64d(lockedFile.ct),key)));
       lockedFile=null;$('rsBox').hidden=true;$('rsPw').value='';
       await importData(data);
-    }catch(e){toast('Password galat hai')}
+    }catch(e){toast('Wrong password')}
     $('rsGo').disabled=false;$('rsGo').textContent='Restore';
   };
   $('rsPw').onkeydown=e=>{if(e.key==='Enter')$('rsGo').click()};
@@ -2082,7 +2082,7 @@
         }
         toast('Restored '+plural(added,'page')+(pics?', '+plural(pics,'photo'):'')+(voices?', '+plural(voices,'voice note'):''));
         showTab('list');
-      }catch(err){toast('Yeh diary ka backup nahi hai')}
+      }catch(err){toast('That file is not a diary backup')}
   }
 
   // ---------- undo bar ----------
@@ -2097,36 +2097,36 @@
   // ---------- storage meter ----------
   async function renderStorage(){
     const t=[];const mb=x=>x>=1e9?(x/1e9).toFixed(1)+' GB':(x/1e6).toFixed(1)+' MB';
-    try{if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();t.push('💾 Use ho raha: '+mb(e.usage||0)+(e.quota?' (phone me '+mb(e.quota)+' tak jagah)':''))}}catch(e){}
-    try{if(navigator.storage&&navigator.storage.persisted){t.push((await navigator.storage.persisted())?'✓ Protected: browser apne aap data nahi mitayega':'⚠️ Abhi protected nahi. App install karne se data hamesha safe rahega.')}}catch(e){}
-    t.push('🔐 Pages, lines, dates, photos aur voice notes PIN se encrypted hain.');
+    try{if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();t.push('💾 Using '+mb(e.usage||0)+(e.quota?' (up to '+mb(e.quota)+' available)':''))}}catch(e){}
+    try{if(navigator.storage&&navigator.storage.persisted){t.push((await navigator.storage.persisted())?'✓ Protected: the browser will not erase this data on its own':'⚠️ Not protected yet. Install the app to keep the data safe for good.')}}catch(e){}
+    t.push('🔐 Pages, lines, dates, photos and voice notes are encrypted with your PIN.');
     $('storeInfo').textContent=t.join('\n');
   }
 
   // ---------- welcome tour ----------
   const TOUR=[
-    ['🔐','Yeh diary sirf tumhari hai','Jo bhi likhogi, photos aur voice notes bhi, sab tumhare PIN se lock hokar sirf is phone me rehta hai. PIN ke bina koi nahi padh sakta.'],
-    ['✍️','Apne andaaz me likho','Neeche ＋ dabao. 🎨 se rang aur highlighter, 🌸 se stickers, aur 🪄 se koi line chhupa do, jo ungli se ghisne pe hi dikhegi.'],
-    ['🗣️','Bolo, sunao, mehsoos karo','🗣️ se bol ke likho, 🎙️ se voice note rakho, aur ⋯ me baarish ya samundar ki aawaz lagao.'],
-    ['📌','Yaadein sambhalo','Roz ek line likho jo har saal wapas aayegi. Photos ki polaroid wall banao, aur Dates me countdowns aur birthdays rakho.'],
-    ['🤫','Ek raaz','Diary ke cover pe ♥ ko jaldi-jaldi 3 baar tap karna. Ek chhupa hua kamra khulega, apne alag PIN ke saath.'],
-    ['❓','Bas ek kaam','More me jaake secret question set kar lo, taaki PIN bhoolne pe bhi diary khul sake.']
+    ['🔐','This diary is only yours','Everything you write, even photos and voice notes, is locked with your PIN and stays only on this phone. Nobody can read it without your PIN.'],
+    ['✍️','Write your way','Tap ＋ below. Use 🎨 for colours and highlights, 🌸 for stickers, and 🪄 to hide a line that only shows when you rub it.'],
+    ['🗣️','Speak, listen, feel','Use 🗣️ to type by speaking, 🎙️ to keep a voice note, and ⋯ to play rain or ocean sounds while you write.'],
+    ['📌','Keep your memories','Write one line a day and see it again every year. Pin photos on the polaroid wall, and keep countdowns and birthdays in Dates.'],
+    ['🤫','A little secret','Tap the ♥ on the diary cover 3 times quickly. A hidden room opens, with its own PIN.'],
+    ['❓','Just one thing','Go to More and set a secret question, so you can still open the diary if you ever forget your PIN.']
   ];
   let tIdx=0;
   let askName=false;
   function showTour(){askName=!settings.name;tIdx=askName?-1:0;$('tour').hidden=false;paintTour()}
   function paintTour(){
     const named=tIdx<0;
-    const [i,t,x]=named?['👋','Hi! Tumhara naam kya hai?','Diary tumhe isi naam se bulayegi, jaise “Good morning, …” ☀️']:TOUR[tIdx];
+    const [i,t,x]=named?['👋','Hi! What is your name?','Your diary will greet you by this name, like “Good morning, …” ☀️']:TOUR[tIdx];
     $('tIco').textContent=i;$('tTitle').textContent=t;$('tText').textContent=x;
     $('tName').hidden=!named;if(named)setTimeout(()=>$('tName').focus(),80);
     $('tDots').innerHTML='';TOUR.forEach((_,k)=>{const d=document.createElement('i');if(k===tIdx)d.className='on';$('tDots').appendChild(d)});
     $('tDots').hidden=named;
-    $('tNext').textContent=tIdx===TOUR.length-1?'Shuru karo ♥':'Aage ›';$('tSkip').hidden=named||tIdx===TOUR.length-1;
+    $('tNext').textContent=tIdx===TOUR.length-1?'Let\'s begin ♥':'Next ›';$('tSkip').hidden=named||tIdx===TOUR.length-1;
   }
   function endTour(){$('tour').hidden=true;settings.tourDone=true;saveSettings()}
   $('tNext').onclick=()=>{
-    if(tIdx<0){const n=$('tName').value.trim();if(!n){toast('Apna naam likho ♥');$('tName').focus();return}settings.name=n;saveSettings();paintHello();toast('Hi '+n+'! 🌸')}
+    if(tIdx<0){const n=$('tName').value.trim();if(!n){toast('Please write your name ♥');$('tName').focus();return}settings.name=n;saveSettings();paintHello();toast('Hi '+n+'! 🌸')}
     if(tIdx<TOUR.length-1){tIdx++;paintTour()}else endTour();
   };
   $('tName').onkeydown=e=>{if(e.key==='Enter')$('tNext').click()};
@@ -2139,24 +2139,24 @@
     $('lock').hidden=true;document.querySelector('body > .wrap').hidden=true;$('room').hidden=false;$('roomMain').hidden=true;$('roomAuth').hidden=false;window.scrollTo(0,0);
     const r=rawLoad(K.room,null);
     $('rmPin2').hidden=!!r;
-    $('rmSub').textContent=r?'Apna secret PIN daalo.':'Yeh ek chhupa hua kamra hai 🤫 Iska alag PIN banao (4 se 8 digit). Yaad rakhna, yeh PIN kabhi reset nahi ho sakta.';
-    $('rmGo').textContent=r?'Andar chalo':'PIN banao';
+    $('rmSub').textContent=r?'Enter your secret PIN.':'This is a hidden room 🤫 Create its own PIN (4 to 8 digits). Remember, this PIN can never be reset.';
+    $('rmGo').textContent=r?'Go inside':'Create PIN';
     $('rmMsg').textContent='';$('rmPin').value='';$('rmPin2').value='';lastAct=Date.now();
     setTimeout(()=>$('rmPin').focus(),60);
   }
   $('rmBack').onclick=()=>location.reload();
   $('rmGo').onclick=async()=>{
     const w=gwait('room');if(w){$('rmMsg').textContent=waitText(w);return}
-    const p=$('rmPin').value;if(!/^\d{4,8}$/.test(p)){$('rmMsg').textContent='PIN 4 se 8 digit ka hona chahiye';return}
+    const p=$('rmPin').value;if(!/^\d{4,8}$/.test(p)){$('rmMsg').textContent='The PIN must be 4 to 8 digits';return}
     let r=rawLoad(K.room,null);
     $('rmGo').disabled=true;$('rmMsg').textContent='';
     try{
       if(!r){
-        if(p!==$('rmPin2').value){$('rmMsg').textContent='Dono PIN match nahi hue';return}
+        if(p!==$('rmPin2').value){$('rmMsg').textContent='The PINs do not match';return}
         rdek=await newKey();r={v:1,pin:await lockKey(p,rdek),data:await encJ([],rdek)};rawSave(K.room,r);roomNotes=[];
       }else{
         try{rdek=await openKey(p,r.pin)}catch(e){rdek=null}
-        if(!rdek){const x=gfail('room');$('rmMsg').textContent=x.u>Date.now()?waitText(gwait('room')):'Galat PIN';return}
+        if(!rdek){const x=gfail('room');$('rmMsg').textContent=x.u>Date.now()?waitText(gwait('room')):'Wrong PIN';return}
         gok('room');roomNotes=await decJ(r.data,rdek);
       }
       $('rmPin').value='';$('rmPin2').value='';
@@ -2167,7 +2167,7 @@
   async function saveRoom(){const r=rawLoad(K.room,null);r.data=await encJ(roomNotes,rdek);if(!rawSave(K.room,r))throw 0}
   function renderRoom(){
     const L=$('rmList');L.innerHTML='';$('rmEd').hidden=true;$('rmNew').hidden=false;L.hidden=false;
-    if(!roomNotes.length){L.innerHTML='<div class="empty"><b>Abhi koi raaz nahi</b>Upar wale card se pehla secret page likho.</div>';return}
+    if(!roomNotes.length){L.innerHTML='<div class="empty"><b>No secrets yet</b>Write your first secret page from the card above.</div>';return}
     roomNotes.slice().sort((a,b)=>b.at-a.at).forEach(n=>{
       const b=document.createElement('button');b.className='entry';
       const d=document.createElement('div');d.className='d';d.textContent=new Date(n.at).toLocaleDateString(undefined,{day:'numeric',month:'long',year:'numeric'});
@@ -2186,14 +2186,14 @@
   $('rmCancel').onclick=renderRoom;
   $('rmSave').onclick=async()=>{
     const title=$('rmTitle').value.trim(),text=$('rmText').value;
-    if(!title&&!text.trim()){toast('Pehle kuch likho');return}
+    if(!title&&!text.trim()){toast('Write something first');return}
     if(rmEdit)Object.assign(roomNotes.find(x=>x.id===rmEdit),{title,text,at:Date.now()});
     else roomNotes.push({id:uid(),title,text,at:Date.now()});
-    try{await saveRoom();toast('Raaz safe hai 🤫');renderRoom()}catch(e){toast('Save nahi hua')}
+    try{await saveRoom();toast('Your secret is safe 🤫');renderRoom()}catch(e){toast('Could not save')}
   };
   $('rmDel').onclick=()=>$('rmDelConfirm').hidden=false;
   $('rmDelNo').onclick=()=>$('rmDelConfirm').hidden=true;
-  $('rmDelYes').onclick=async()=>{roomNotes=roomNotes.filter(x=>x.id!==rmEdit);try{await saveRoom()}catch(e){}toast('Delete ho gaya');renderRoom()};
+  $('rmDelYes').onclick=async()=>{roomNotes=roomNotes.filter(x=>x.id!==rmEdit);try{await saveRoom()}catch(e){}toast('Deleted');renderRoom()};
   $('rmLock').onclick=()=>lockNow();
 
 
@@ -2201,10 +2201,10 @@
   $('rstBtn').onclick=()=>{$('rstBox').hidden=false;$('rstPin').value='';$('rstWord').value='';$('rstPin').focus()};
   $('rstNo').onclick=()=>{$('rstBox').hidden=true};
   $('rstGo').onclick=async()=>{
-    if($('rstWord').value.trim().toUpperCase()!=='RESET'){toast('Confirm karne ke liye RESET likho');$('rstWord').focus();return}
+    if($('rstWord').value.trim().toUpperCase()!=='RESET'){toast('Type RESET to confirm');$('rstWord').focus();return}
     $('rstGo').disabled=true;
     let ok=false;try{await openKey($('rstPin').value,vault.pin);ok=true}catch(e){}
-    if(!ok){$('rstGo').disabled=false;toast('PIN galat hai');return}
+    if(!ok){$('rstGo').disabled=false;toast('Wrong PIN');return}
     try{Object.keys(localStorage).filter(k=>k.startsWith('myDiary.')).forEach(k=>localStorage.removeItem(k))}catch(e){}
     await new Promise(r=>{try{const q=indexedDB.deleteDatabase('myDiary');q.onsuccess=q.onerror=q.onblocked=()=>r()}catch(e){r()}});
     try{if(window.caches){const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('my-diary')).map(k=>caches.delete(k)))}}catch(e){}
