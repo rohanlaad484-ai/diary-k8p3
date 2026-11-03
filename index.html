@@ -318,6 +318,57 @@
   .toast{position:fixed;z-index:60;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:999px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90vw;text-align:center}
   .toast.show{opacity:1}
 
+  /* photos: page photos, viewer actions, slideshow, editor, collage */
+  .pgph{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+  .pgph .ph{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;padding:0;background:var(--rose-soft);max-width:100%}
+  .pgph .ph img{width:100%;height:100%;object-fit:cover;display:block}
+  .pgph .ph .x{position:absolute;top:4px;right:4px;width:26px;height:26px;padding:0;border-radius:50%;background:rgba(40,15,25,.7);color:#fff;font-size:.75rem;display:grid;place-items:center}
+  .pgph .add{aspect-ratio:1;border:2px dashed var(--h2);background:transparent;border-radius:12px;color:var(--rose);font-weight:800;font-size:.85rem;display:grid;place-content:center;gap:2px;padding:0}
+  .pgph .add span{font-size:1.4rem}
+  .otd{background:var(--paper);border-radius:20px;padding:12px 14px;margin-bottom:12px;display:grid;gap:8px;box-shadow:0 4px 14px rgba(232,99,140,.1)}
+  .otd small{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .otd-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+  .otd-row button{flex:0 0 72px;height:72px;padding:0;border-radius:12px;overflow:hidden;position:relative}
+  .otd-row img{width:100%;height:100%;object-fit:cover;display:block}
+  .otd-row i{position:absolute;left:4px;bottom:4px;background:rgba(40,15,25,.7);color:#fff;font-style:normal;font-size:.62rem;font-weight:800;border-radius:999px;padding:1px 6px}
+  .album-head .cov{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--paper);box-shadow:0 0 0 2px var(--h2);align-self:center}
+  .album-head .acts{margin-left:auto;display:flex;gap:4px}
+  .album-head .acts button{padding:5px 10px;font-size:.85rem;background:var(--paper)}
+  .album-head input{flex:1 1 140px;width:auto;padding:6px 12px}
+  .thumb{position:relative}
+  .thumb .hrt2{position:absolute;right:5px;bottom:4px;font-size:.85rem;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .thumb.pick{outline:3px solid var(--rose);outline-offset:-3px}
+  .thumb .num{position:absolute;top:5px;left:5px;width:24px;height:24px;border-radius:50%;background:var(--rose);color:#fff;font-weight:800;font-size:.8rem;display:grid;place-items:center}
+  @keyframes develop{0%{filter:brightness(2.4) sepia(.7) saturate(0) blur(3px)}60%{filter:brightness(1.3) sepia(.3) saturate(.6) blur(.5px)}100%{filter:none}}
+  .develop img,img.develop{animation:develop 3.5s ease-out both}
+  .lb-acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .lb-acts button{background:rgba(255,255,255,.14);color:#fff;padding:7px 12px;font-size:.88rem}
+  .lb-acts #lbFav{font-size:1.1rem}
+  .lb #lbMoveBox input{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff}
+  .ss{position:fixed;inset:0;z-index:52;background:#140910;overflow:hidden}
+  .ss img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 1.2s ease}
+  .ss img.on{opacity:1;animation:kb 6s ease-out both}
+  @keyframes kb{from{transform:scale(1)}to{transform:scale(1.08)}}
+  .ss-cap{position:absolute;left:0;right:0;bottom:calc(84px + env(safe-area-inset-bottom,0px));text-align:center;color:#fff;font-family:var(--hand);font-size:1.8rem;text-shadow:0 2px 8px rgba(0,0,0,.6);padding:0 20px}
+  .ss-bar{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.14);border-radius:999px;padding:6px}
+  .ss-bar button{background:rgba(255,255,255,.18);color:#fff;width:42px;height:42px;padding:0}
+  .ss-bar select{width:auto;background:rgba(255,255,255,.18);color:#fff;border:none;border-radius:999px;padding:8px 12px}
+  .ss-bar select option{color:#000}
+  .pe{position:fixed;inset:0;z-index:52;background:var(--bg);display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+    padding:env(safe-area-inset-top,0px) max(12px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(12px,env(safe-area-inset-left,0px))}
+  .pe-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0}
+  .pe-stage{display:grid;place-items:center;min-height:0;padding:6px 0}
+  .pe-stage canvas{max-width:100%;max-height:100%;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.18);touch-action:none;background:#fff}
+  .pe-tools{display:grid;gap:6px;padding:8px 0 12px;max-width:560px;width:100%;margin:0 auto}
+  .pe-lbl{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .pe-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;align-items:center}
+  .pe-row button{flex:0 0 auto;padding:6px 12px;font-size:.86rem;background:var(--paper);border:2px solid var(--line)}
+  .pe-row button[aria-pressed="true"]{border-color:var(--rose);background:var(--rose-soft)}
+  .pe-row .em{font-size:1.4rem;padding:2px 8px;border:none;background:transparent}
+  .pe-row input[type=range]{flex:1 1 auto;min-width:0;accent-color:var(--rose);border:none;padding:0;background:transparent}
+  .pphotos{display:flex;flex-wrap:wrap;gap:4mm;margin-top:5mm}
+  .pphotos img{width:48%;border-radius:3mm;object-fit:cover}
+
   /* Printed diary book */
   #printArea{display:none}
   @media print{
@@ -409,6 +460,7 @@
         <button class="qtile" id="qLine"><small>📅 One line a day</small><b id="qLineTxt"></b></button>
         <button class="qtile" id="qDates"><small>⏳ Dates</small><b id="qDatesTxt"></b></button>
       </div>
+      <div class="otd" id="otd" hidden><small id="otdTitle">📸 On this day</small><div class="otd-row" id="otdRow"></div></div>
       <div class="stats" id="stats"></div>
       <div class="upcoming" id="upcoming" hidden></div>
       <h3 class="sec">Recent pages</h3>
@@ -480,9 +532,19 @@
       <div class="chips" id="galView">
         <button class="chip" data-view="albums" aria-pressed="true">Albums</button>
         <button class="chip" data-view="wall" aria-pressed="false">📌 Polaroid wall</button>
+        <button class="chip" data-view="collage" aria-pressed="false">🧩 Collage</button>
       </div>
       <div id="albums"></div>
       <div id="wall" class="wall" hidden></div>
+      <div id="collage" hidden>
+        <div class="card stack">
+          <div class="row" style="justify-content:space-between">
+            <span class="sub" id="colInfo">Pick 2 to 4 photos</span>
+            <button class="primary" id="colGo" disabled>Make collage</button>
+          </div>
+          <div class="thumbs" id="colGrid"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Dates -->
@@ -679,6 +741,8 @@
       </div>
       <div id="edBody" class="page" contenteditable="true" data-ph="Dear diary…" role="textbox" aria-multiline="true" aria-label="Diary page"></div>
       <div class="audiolist" id="edAudioList"></div>
+      <div class="pgph" id="edPhotos"></div>
+      <input type="file" id="pagePhotoFile" accept="image/*" multiple hidden>
       <div id="leaveConfirm" class="confirm" hidden>
         <span>Leave without saving?</span>
         <button class="primary" id="leaveYes">Discard changes</button>
@@ -767,6 +831,17 @@
     <div id="lbAlbum" class="lb-album"></div>
     <input id="lbCaption" placeholder="Add a caption…" maxlength="140">
     <div id="lbCapRO"></div>
+    <div class="lb-acts">
+      <button id="lbFav" aria-label="Favourite">♡</button>
+      <button id="lbSave">⬇ Save</button>
+      <button id="lbEdit">✨ Edit</button>
+      <button id="lbMove">📁 Move</button>
+      <button id="lbCover">🖼️ Cover</button>
+    </div>
+    <div class="row" id="lbMoveBox" hidden style="width:100%">
+      <input id="lbMoveIn" list="albumList" placeholder="Move to album…" style="flex:1 1 160px;width:auto">
+      <button class="primary" id="lbMoveGo">Move</button>
+    </div>
     <div class="row" style="justify-content:center">
       <span id="lbCount" class="sub"></span>
       <button class="danger" id="lbDel">Delete photo</button>
@@ -775,6 +850,37 @@
       <span>Delete this photo?</span>
       <button class="primary" id="lbDelYes">Yes, delete</button>
       <button id="lbDelNo">Keep it</button>
+    </div>
+  </div>
+</div>
+
+<div id="ss" class="ss" hidden role="dialog" aria-modal="true" aria-label="Slideshow">
+  <img id="ssA" alt=""><img id="ssB" alt="">
+  <div class="ss-cap" id="ssCap"></div>
+  <div class="ss-bar">
+    <button id="ssPlay" aria-label="Pause">⏸</button>
+    <select id="ssSound" aria-label="Sound">
+      <option value="">🔇 No sound</option><option value="music">🎶 Music box</option><option value="rain">🌧️ Rain</option><option value="ocean">🌊 Ocean</option><option value="cafe">☕ Café</option>
+    </select>
+    <button id="ssClose" aria-label="Close slideshow">✕</button>
+  </div>
+</div>
+
+<div id="pe" class="pe" hidden role="dialog" aria-modal="true" aria-label="Edit photo">
+  <div class="pe-top">
+    <button class="ghost" id="peCancel">✕ Cancel</button>
+    <b>Edit photo</b>
+    <button class="primary" id="peSave">Save copy</button>
+  </div>
+  <div class="pe-stage"><canvas id="peCv"></canvas></div>
+  <div class="pe-tools">
+    <div class="pe-lbl">Filter</div><div class="pe-row" id="peFilters"></div>
+    <div class="pe-lbl">Frame</div><div class="pe-row" id="peFrames"></div>
+    <div class="pe-lbl">Stickers · tap to add, drag to move</div><div class="pe-row" id="peStk"></div>
+    <div class="pe-row">
+      <label class="pe-lbl" for="peSize">Size</label>
+      <input type="range" id="peSize" min="6" max="40" value="16">
+      <button id="peDel">Remove sticker</button>
     </div>
   </div>
 </div>
@@ -925,7 +1031,7 @@
   // photos and voice notes are encrypted before they touch the phone's storage
   const pcache=new Map();
   async function encRec(s,v){
-    if(s==='photos'){const {iv,ct}=await encB(te.encode(JSON.stringify({album:v.album,caption:v.caption,data:v.data,added:v.added})));return{id:v.id,v:2,iv,ct}}
+    if(s==='photos'){const rest=Object.assign({},v);delete rest.id;delete rest.gift;const {iv,ct}=await encB(te.encode(JSON.stringify(rest)));return{id:v.id,v:2,iv,ct}}
     const {iv,ct}=await encB(new Uint8Array(await v.blob.arrayBuffer()));return{id:v.id,v:2,iv,ct,type:v.blob.type||'audio/webm',dur:v.dur};
   }
   async function decRec(s,r){
@@ -956,6 +1062,7 @@
     if(!e.notebook||!settings.notebooks.some(n=>n.id===e.notebook))e.notebook=settings.notebooks[0].id;
     e.rating=Math.max(0,Math.min(10,+e.rating||0));e.fav=!!e.fav;
     if(!Array.isArray(e.audio))e.audio=[];
+    if(!Array.isArray(e.photos))e.photos=[];
     e.title=String(e.title||'');e.created=e.created||Date.now();e.updated=e.updated||Date.now();
     return e;
   }
@@ -965,7 +1072,7 @@
     entries=load(K.entries,[]).map(migrate);
     countdowns=load(K.cd,[]);impDates=load(K.dates,[]);lines=load(K.lines,{});trash=load(K.trash,[]);
     const cut=Date.now()-30*DAY,keep=[];
-    trash.forEach(t=>{if(t.deletedAt<cut)(t.entry.audio||[]).forEach(a=>idb.del('audio',a.id).catch(()=>{}));else keep.push(t)});
+    trash.forEach(t=>{if(t.deletedAt<cut){(t.entry.audio||[]).forEach(a=>idb.del('audio',a.id).catch(()=>{}));(t.entry.photos||[]).forEach(id=>idb.del('photos',id).catch(()=>{}))}else keep.push(t)});
     if(keep.length!==trash.length){trash=keep;save(K.trash,trash)}
   }
 
@@ -981,8 +1088,8 @@
     g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+len);
     o.connect(g);g.connect(dest);o.start(t);o.stop(t+len+0.05);
   }
-  function musicBox(){
-    if(!settings.music)return;const a=ac();if(!a)return;
+  function musicBox(force){
+    if(!settings.music&&!force)return;const a=ac();if(!a)return;
     const notes=[76,79,84,83,79,81,79,76,74,76,72,79],t0=a.currentTime+0.08;
     notes.forEach((n,i)=>{const f=440*Math.pow(2,(n-69)/12),t=t0+i*0.21;tone(a,a.destination,f,t,0.11,1.3);tone(a,a.destination,f*2.003,t,0.025,0.6)});
   }
@@ -1251,6 +1358,8 @@
   });
   window.addEventListener('pagehide',()=>{if(isOpen())$('veil').hidden=false});
   document.addEventListener('keydown',e=>{
+    if(!$('pe').hidden){if(e.key==='Escape')closePE();return}
+    if(!$('ss').hidden){if(e.key==='Escape')stopSlides();if(e.key===' '){e.preventDefault();$('ssPlay').click()}return}
     if(!$('lb').hidden){
       if(e.key==='Escape')closeLb();
       if(e.target.tagName!=='INPUT'){if(e.key==='ArrowLeft')$('lbPrev').click();if(e.key==='ArrowRight')$('lbNext').click()}
@@ -1285,6 +1394,7 @@
     const bd=document.createElement('div');bd.className='badges';
     if(e.fav){const s=document.createElement('span');s.textContent='⭐';bd.appendChild(s)}
     if(e.audio.length){const s=document.createElement('span');s.textContent='🎙️';bd.appendChild(s)}
+    if(e.photos&&e.photos.length){const s=document.createElement('span');s.textContent='📷';bd.appendChild(s)}
     if(e.rating){const s=document.createElement('span');s.className='badge';s.textContent=e.rating+'/10';bd.appendChild(s)}
     top.append(d,bd);
     const t=document.createElement('div');t.className='t';t.textContent=e.title||'Untitled page';
@@ -1361,7 +1471,7 @@
   document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 
   function renderList(){
-    renderHome();renderChips();renderUpcoming();renderBanners();
+    renderHome();renderOTD();renderChips();renderUpcoming();renderBanners();
     const q=$('search').value.trim().toLowerCase(),fm=$('fMonth').value,fr=$('fRate').value;
     // month list from the pages that exist
     const months=[...new Set(entries.map(e=>e.date.slice(0,7)))].sort().reverse(),M=$('fMonth');
@@ -1569,7 +1679,7 @@
       const r=document.createElement('div');r.className='row';
       const rs=document.createElement('button');rs.className='primary';rs.textContent='Restore';
       rs.onclick=()=>{trash=trash.filter(x=>x!==t);save(K.trash,trash);entries.push(migrate(t.entry));persist();toast('Page restored');renderSettings()};
-      r.append(rs,removeBtn(()=>{(t.entry.audio||[]).forEach(a=>idb.del('audio',a.id).catch(()=>{}));trash=trash.filter(x=>x!==t);save(K.trash,trash);renderSettings()}));
+      r.append(rs,removeBtn(()=>{(t.entry.audio||[]).forEach(a=>idb.del('audio',a.id).catch(()=>{}));(t.entry.photos||[]).forEach(id=>idb.del('photos',id).catch(()=>{}));trash=trash.filter(x=>x!==t);save(K.trash,trash);renderSettings()}));
       row.append(left,r);T.appendChild(row);
     });
   }
@@ -1634,8 +1744,9 @@
   };
 
   // ---------- printed book ----------
-  function printBook(list,o){
+  async function printBook(list,o){
     if(!list.length){toast('No pages to put in the book');return}
+    const imgs={};for(const e of list)for(const id of (e.photos||[])){try{const r=await idb.get('photos',id);if(r)imgs[id]=r.data}catch(x){}}
     const A=$('printArea');A.innerHTML='';
     if(o.cover){
       const c=document.createElement('div');c.className='pcover';
@@ -1650,6 +1761,7 @@
       const h=document.createElement('h2');h.textContent=e.title||'Untitled page';
       const b=document.createElement('div');b.className='pbody';b.innerHTML=clean(e.html);
       s.append(m,h,b);
+      if((e.photos||[]).some(id=>imgs[id])){const g=document.createElement('div');g.className='pphotos';e.photos.forEach(id=>{if(imgs[id]){const im=document.createElement('img');im.src=imgs[id];im.alt='';g.appendChild(im)}});s.appendChild(g)}
       if(e.audio.length){const v=document.createElement('div');v.className='pvoice';v.textContent='🎙️ '+plural(e.audio.length,'voice note')+' recorded on this page';s.appendChild(v)}
       A.appendChild(s);
     });
@@ -1659,7 +1771,7 @@
   window.addEventListener('afterprint',()=>{$('printArea').innerHTML=''});
 
   // ---------- editor ----------
-  let editId=null,edRating=0,edFav=false,edAudio=[],pendingAudio=[],removedAudio=[],lastRange=null;
+  let editId=null,edRating=0,edFav=false,edAudio=[],pendingAudio=[],removedAudio=[],lastRange=null,edPhotos=[],pendingPh=[],removedPh=[];
   const STICKERS=['🌸','💖','✨','🌈','🦋','🎀','🍓','☁️','🌙','⭐','🧸','🌻','🍰','🎉','😊','🥰','😂','😴','😭','😤','📚','✈️','☕','🎵','🐱','🐶','🌷','🍕','💪','🙏'];
   STICKERS.forEach(s=>{const b=document.createElement('button');b.textContent=s;b.setAttribute('aria-label','Add sticker '+s);b.onmousedown=e=>e.preventDefault();b.onclick=()=>addSticker(s);$('stkPal').appendChild(b)});
   const rateFace=n=>!n?'–':n+'/10 '+(n<=3?'😔':n<=5?'😐':n<=7?'🙂':n<=9?'😊':'🤩');
@@ -1678,18 +1790,19 @@
     $('edTitle').value=e?e.title:'';
     $('edBody').innerHTML=e?clean(e.html):'';
     edRating=e?e.rating:0;edFav=e?e.fav:false;edAudio=e?e.audio.map(a=>({...a})):[];pendingAudio=[];removedAudio=[];lastRange=null;
-    paintRate();paintFav();renderAudio();
+    edPhotos=e?(e.photos||[]).slice():[];pendingPh=[];removedPh=[];
+    paintRate();paintFav();renderAudio();renderEdPhotos();
     $('delBtn').hidden=!e;$('delConfirm').hidden=true;$('leaveConfirm').hidden=true;closePanels();
     TABS.forEach(x=>$('tab-'+x).hidden=true);$('tabs').hidden=true;$('newBtn').hidden=true;
     $('editor').hidden=false;window.scrollTo(0,0);
     edSnap=snapshot();
   }
   let edSnap='',draftTimer=null;
-  function snapshot(){return JSON.stringify([$('edTitle').value,$('edBody').innerHTML,edRating,edFav,$('edDate').value,$('edNb').value,edAudio.length])}
+  function snapshot(){return JSON.stringify([$('edTitle').value,$('edBody').innerHTML,edRating,edFav,$('edDate').value,$('edNb').value,edAudio.length,edPhotos.join()])}
   function saveDraft(){
     if($('editor').hidden||snapshot()===edSnap)return;
     save(K.draft,{editId,title:$('edTitle').value,html:$('edBody').innerHTML,date:$('edDate').value,notebook:$('edNb').value,
-      rating:edRating,fav:edFav,audio:edAudio,pending:pendingAudio,removed:removedAudio,at:Date.now()});
+      rating:edRating,fav:edFav,audio:edAudio,pending:pendingAudio,removed:removedAudio,photos:edPhotos,ppend:pendingPh,prem:removedPh,at:Date.now()});
   }
   function queueDraft(){clearTimeout(draftTimer);draftTimer=setTimeout(saveDraft,700)}
   function clearDraft(){clearTimeout(draftTimer);removeKey(K.draft)}
@@ -1702,7 +1815,8 @@
     $('edTitle').value=d.title||'';$('edBody').innerHTML=clean(d.html||'');$('edDate').value=d.date||todayISO();
     if(settings.notebooks.some(n=>n.id===d.notebook))$('edNb').value=d.notebook;
     edRating=+d.rating||0;edFav=!!d.fav;edAudio=Array.isArray(d.audio)?d.audio:[];pendingAudio=d.pending||[];removedAudio=d.removed||[];
-    paintRate();paintFav();renderAudio();
+    edPhotos=Array.isArray(d.photos)?d.photos:[];pendingPh=d.ppend||[];removedPh=d.prem||[];
+    paintRate();paintFav();renderAudio();renderEdPhotos();
   }
   function closeEditor(){
     stopRec();stopSpeak();stopAmb();revokeUrls();
@@ -1712,6 +1826,7 @@
   function discardEditor(){
     if($('editor').hidden)return;
     pendingAudio.forEach(id=>idb.del('audio',id).catch(()=>{}));pendingAudio=[];
+    pendingPh.forEach(id=>idb.del('photos',id).catch(()=>{}));pendingPh=[];
     clearDraft();closeEditor();
   }
   $('newBtn').onclick=()=>openEditor(null);
@@ -1725,14 +1840,15 @@
   function saveEntry(){
     if(rec){toast('Stop the recording first');return null}
     const html=clean($('edBody').innerHTML),text=plain(html),title=$('edTitle').value.trim();
-    if(!title&&!text&&!edAudio.length){toast('Write or record something first ♥');return null}
-    const data={title,html,text,date:$('edDate').value||todayISO(),notebook:$('edNb').value,rating:edRating,fav:edFav,audio:edAudio.slice(),updated:Date.now()};
+    if(!title&&!text&&!edAudio.length&&!edPhotos.length){toast('Write or record something first ♥');return null}
+    const data={title,html,text,date:$('edDate').value||todayISO(),notebook:$('edNb').value,rating:edRating,fav:edFav,audio:edAudio.slice(),photos:edPhotos.slice(),updated:Date.now()};
     let e;
     if(editId){e=entries.find(x=>x.id===editId);Object.assign(e,data)}
     else{e=Object.assign({id:uid(),created:Date.now()},data);entries.push(e)}
     if(!persist())return null;
     removedAudio.forEach(a=>idb.del('audio',a.id).catch(()=>{}));
-    pendingAudio=[];removedAudio=[];clearDraft();
+    removedPh.forEach(id=>idb.del('photos',id).catch(()=>{}));
+    pendingAudio=[];removedAudio=[];pendingPh=[];removedPh=[];clearDraft();
     return e;
   }
   $('saveBtn').onclick=()=>{if(saveEntry()){toast('Saved ♥');closeEditor()}};
@@ -1746,6 +1862,7 @@
   $('delYes').onclick=()=>{
     const e=entries.find(x=>x.id===editId);
     pendingAudio.forEach(id=>idb.del('audio',id).catch(()=>{}));pendingAudio=[];
+    pendingPh.forEach(id=>idb.del('photos',id).catch(()=>{}));pendingPh=[];
     if(e){trash.push({entry:e,deletedAt:Date.now()});save(K.trash,trash)}
     entries=entries.filter(x=>x.id!==editId);persist();clearDraft();
     closeEditor();
@@ -1879,10 +1996,13 @@
   }
   function albumsList(){
     const m=new Map();
-    allPhotos().sort((a,b)=>(a.added||0)-(b.added||0)).forEach(p=>{const k=p.album||'Photos';if(!m.has(k))m.set(k,[]);m.get(k).push(p)});
+    allPhotos().filter(p=>!p.page).sort((a,b)=>(b.cover?1:0)-(a.cover?1:0)||(a.added||0)-(b.added||0)).forEach(p=>{const k=p.album||'Photos';if(!m.has(k))m.set(k,[]);m.get(k).push(p)});
     return [...m.entries()].sort((a,b)=>b[0].localeCompare(a[0],undefined,{numeric:true}));
   }
   let galView='albums';
+  const freshIds=new Set();
+  function markFresh(ids){ids.forEach(i=>freshIds.add(i));setTimeout(()=>ids.forEach(i=>freshIds.delete(i)),5000)}
+  const prec=p=>{const o=Object.assign({},p);delete o.gift;return o};
   document.querySelectorAll('#galView [data-view]').forEach(b=>b.onclick=()=>{galView=b.dataset.view;renderGallery()});
   function seeded(str){let h=1779033703;for(const c of str)h=Math.imul(h^c.charCodeAt(0),3432918353);return()=>{h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return((h^=h>>>16)>>>0)/4294967296}}
   let zTop=10;
@@ -1897,7 +2017,7 @@
       const el=document.createElement('div');el.className='pol';
       el.style.left=Math.min(1,Math.max(0,pos.x))*(width-pw)+'px';el.style.top=pos.y+'px';el.style.transform='rotate('+pos.r.toFixed(1)+'deg)';
       el.setAttribute('role','button');el.setAttribute('aria-label',p.caption||p.album);
-      const im=document.createElement('img');im.src=p.data;im.alt='';im.draggable=false;
+      const im=document.createElement('img');im.src=p.data;im.alt='';im.draggable=false;if(freshIds.has(p.id))im.className='develop';
       const c=document.createElement('div');c.className='c';c.textContent=p.caption||p.album;
       el.append(im,c);W.appendChild(el);
       maxY=Math.max(maxY,pos.y+ph+30);
@@ -1926,23 +2046,70 @@
     document.querySelectorAll('#galView [data-view]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===galView));
     const A=$('albums');A.innerHTML='';const albums=albumsList();
     $('albumList').innerHTML='';albums.forEach(([n])=>{const o=document.createElement('option');o.value=n;$('albumList').appendChild(o)});
-    A.hidden=galView!=='albums';$('wall').hidden=galView!=='wall';
-    if(galView==='wall'){renderWall(albums.flatMap(([,ps])=>ps));return}
+    A.hidden=galView!=='albums';$('wall').hidden=galView!=='wall';$('collage').hidden=galView!=='collage';
+    const flat=albums.flatMap(([,ps])=>ps);
+    if(galView==='wall'){renderWall(flat);return}
+    if(galView==='collage'){renderCollagePick(flat);return}
     if(!albums.length){A.innerHTML='<div class="empty"><b>No photos yet</b>Type an album name, then tap “Add photos”.</div>';return}
-    albums.forEach(([name,photos])=>{
-      const sec=document.createElement('section');sec.className='album';
-      const hd=document.createElement('div');hd.className='album-head';
+    const favs=flat.filter(p=>p.fav);
+    if(favs.length)A.appendChild(albumSection('❤️ Favourites',favs,true));
+    albums.forEach(([name,photos])=>A.appendChild(albumSection(name,photos,false)));
+  }
+  function thumbBtn(p,list,i){
+    const b=document.createElement('button');b.className='thumb'+(freshIds.has(p.id)?' develop':'');
+    b.setAttribute('aria-label',p.caption||('Photo '+(i+1)));
+    const im=document.createElement('img');im.src=p.data;im.alt='';im.loading='lazy';b.appendChild(im);
+    if(p.fav){const f=document.createElement('span');f.className='hrt2';f.textContent='❤️';b.appendChild(f)}
+    b.onclick=()=>openLb(list,i);return b;
+  }
+  function albumSection(name,photos,virtual){
+    const sec=document.createElement('section');sec.className='album';
+    const hd=document.createElement('div');hd.className='album-head';
+    const mine=photos.filter(p=>!p.gift);
+    function head(){
+      hd.innerHTML='';
+      const cov=!virtual&&photos.find(p=>p.cover);
+      if(cov){const ci=document.createElement('img');ci.className='cov';ci.src=cov.data;ci.alt='';hd.appendChild(ci)}
       const h=document.createElement('h2');h.textContent=name;
       const c=document.createElement('span');c.className='sub';c.textContent=plural(photos.length,'photo');
-      hd.append(h,c);
-      const g=document.createElement('div');g.className='thumbs';
-      photos.forEach((p,i)=>{
-        const b=document.createElement('button');b.className='thumb';b.setAttribute('aria-label',p.caption||('Photo '+(i+1)+' from '+name));
-        const im=document.createElement('img');im.src=p.data;im.alt='';im.loading='lazy';
-        b.appendChild(im);b.onclick=()=>openLb(photos,i);g.appendChild(b);
-      });
-      sec.append(hd,g);A.appendChild(sec);
-    });
+      const acts=document.createElement('div');acts.className='acts';
+      const play=document.createElement('button');play.textContent='▶';play.setAttribute('aria-label','Slideshow of '+name);play.onclick=()=>startSlides(photos);acts.appendChild(play);
+      if(!virtual&&mine.length){
+        const ren=document.createElement('button');ren.textContent='✏️';ren.setAttribute('aria-label','Rename album');ren.onclick=renameUI;
+        const del=document.createElement('button');del.textContent='🗑️';del.setAttribute('aria-label','Delete album');del.onclick=deleteUI;
+        acts.append(ren,del);
+      }
+      hd.append(h,c,acts);
+    }
+    function renameUI(){
+      hd.innerHTML='';
+      const inp=document.createElement('input');inp.value=name;inp.maxLength=40;inp.setAttribute('aria-label','New album name');
+      const ok=document.createElement('button');ok.className='primary';ok.textContent='Save';
+      const no=document.createElement('button');no.className='ghost';no.textContent='Cancel';no.onclick=head;
+      ok.onclick=async()=>{
+        const n=inp.value.trim();if(!n||n===name){head();return}
+        ok.disabled=true;for(const p of mine){p.album=n;try{await idb.put('photos',prec(p))}catch(e){}}
+        toast('Album renamed');renderGallery();
+      };
+      inp.onkeydown=e=>{if(e.key==='Enter')ok.click()};
+      hd.append(inp,ok,no);inp.focus();inp.select();
+    }
+    function deleteUI(){
+      hd.innerHTML='';
+      const t=document.createElement('span');t.textContent='Delete '+plural(mine.length,'photo')+' in “'+name+'”?';t.style.flex='1 1 100%';
+      const yes=document.createElement('button');yes.className='primary';yes.textContent='Yes, delete';
+      const no=document.createElement('button');no.className='ghost';no.textContent='Keep';no.onclick=head;
+      yes.onclick=async()=>{
+        const copies=mine.map(prec);for(const p of copies){try{await idb.del('photos',p.id)}catch(e){}}
+        renderGallery();
+        snack('Album deleted',async()=>{for(const p of copies){try{await idb.put('photos',p)}catch(e){}}toast('Album restored');renderGallery()});
+      };
+      hd.append(t,yes,no);
+    }
+    head();
+    const g=document.createElement('div');g.className='thumbs';
+    photos.forEach((p,i)=>g.appendChild(thumbBtn(p,photos,i)));
+    sec.append(hd,g);return sec;
   }
   function compress(file){
     return new Promise((res,rej)=>{
@@ -1959,11 +2126,12 @@
   $('addPhotosBtn').onclick=()=>{if(!$('albumName').value.trim()){toast('Type an album name first');$('albumName').focus();return}$('photoFile').click()};
   $('photoFile').onchange=async ev=>{
     const files=[...ev.target.files];ev.target.value='';if(!files.length)return;
-    const album=$('albumName').value.trim()||'Photos';let ok=0,bad=0;
+    const album=$('albumName').value.trim()||'Photos';let ok=0,bad=0;const ids=[];
     for(let i=0;i<files.length;i++){
       toast('Adding photo '+(i+1)+' of '+files.length+'…');
-      try{await idb.put('photos',{id:'p'+uid(),album,caption:'',data:await compress(files[i]),added:Date.now()+i});ok++}catch(e){bad++}
+      try{const id='p'+uid();await idb.put('photos',{id,album,caption:'',data:await compress(files[i]),added:Date.now()+i});ids.push(id);ok++}catch(e){bad++}
     }
+    markFresh(ids);
     toast(plural(ok,'photo')+' added'+(bad?' · '+bad+' could not be opened':''));renderGallery();
   };
 
@@ -1974,10 +2142,14 @@
   function showLb(){
     const p=lbList[lbIdx];
     $('lbImg').src=p.data;$('lbImg').alt=p.caption||p.album;
-    $('lbAlbum').textContent=p.album;$('lbCount').textContent=(lbIdx+1)+' / '+lbList.length;
+    $('lbAlbum').textContent=p.page?'From a diary page':(p.album||'Photos');$('lbCount').textContent=(lbIdx+1)+' / '+lbList.length;
     $('lbCaption').hidden=!!p.gift;$('lbCaption').value=p.caption||'';
     $('lbCapRO').hidden=!p.gift||!p.caption;$('lbCapRO').textContent=p.caption||'';
-    $('lbDel').hidden=!!p.gift;$('lbDelConfirm').hidden=true;
+    $('lbDel').hidden=!!p.gift||!!p.page;$('lbDelConfirm').hidden=true;
+    const own=!p.gift&&!p.page;
+    $('lbFav').hidden=!own;$('lbFav').textContent=p.fav?'❤️':'♡';$('lbFav').setAttribute('aria-label',p.fav?'Remove from favourites':'Add to favourites');
+    $('lbMove').hidden=!own;$('lbCover').hidden=!own;$('lbCover').textContent=p.cover?'🖼️ Cover ✓':'🖼️ Cover';
+    $('lbMoveBox').hidden=true;
     $('lbPrev').hidden=$('lbNext').hidden=lbList.length<2;
   }
   $('lbClose').onclick=closeLb;
@@ -1988,12 +2160,12 @@
   $('lbStage').addEventListener('touchend',e=>{if(tx0===null)return;const dx=e.changedTouches[0].clientX-tx0;tx0=null;if(Math.abs(dx)>50&&lbList.length>1)(dx<0?$('lbNext'):$('lbPrev')).click()});
   $('lbCaption').onchange=async()=>{
     const p=lbList[lbIdx];p.caption=$('lbCaption').value.trim();
-    try{await idb.put('photos',{id:p.id,album:p.album,caption:p.caption,data:p.data,added:p.added});toast('Caption saved')}catch(e){toast('Could not save caption')}
+    try{await idb.put('photos',prec(p));toast('Caption saved')}catch(e){toast('Could not save caption')}
   };
   $('lbDel').onclick=()=>$('lbDelConfirm').hidden=false;
   $('lbDelNo').onclick=()=>$('lbDelConfirm').hidden=true;
   $('lbDelYes').onclick=async()=>{
-    const p=lbList[lbIdx],copy={id:p.id,album:p.album,caption:p.caption,data:p.data,added:p.added};
+    const p=lbList[lbIdx],copy=prec(p);
     try{await idb.del('photos',p.id)}catch(e){}
     lbList.splice(lbIdx,1);
     if(!lbList.length)closeLb();else{lbIdx=Math.min(lbIdx,lbList.length-1);showLb()}
@@ -2001,10 +2173,232 @@
     snack('Photo deleted',async()=>{try{await idb.put('photos',copy);toast('Photo restored')}catch(e){}renderGallery()});
   };
 
+
+  // viewer actions: favourite, save to phone, move, album cover, edit
+  $('lbFav').onclick=async()=>{
+    const p=lbList[lbIdx];p.fav=!p.fav;try{await idb.put('photos',prec(p))}catch(e){}
+    showLb();toast(p.fav?'Added to favourites ❤️':'Removed from favourites');if(!$('tab-gallery').hidden)renderGallery();
+  };
+  $('lbSave').onclick=async()=>{
+    const p=lbList[lbIdx];
+    try{const b=await (await fetch(p.data)).blob();download(b,((p.album||'photo').replace(/[^\w-]+/g,'-')||'photo')+'-'+p.id+'.jpg');toast('Photo saved to your phone ⬇')}
+    catch(e){toast('Could not save the photo')}
+  };
+  $('lbMove').onclick=()=>{$('lbMoveBox').hidden=!$('lbMoveBox').hidden;$('lbMoveIn').value='';if(!$('lbMoveBox').hidden)$('lbMoveIn').focus()};
+  $('lbMoveGo').onclick=async()=>{
+    const n=$('lbMoveIn').value.trim();if(!n){toast('Type an album name');return}
+    const p=lbList[lbIdx];p.album=n;p.cover=false;try{await idb.put('photos',prec(p))}catch(e){}
+    toast('Moved to “'+n+'”');showLb();renderGallery();
+  };
+  $('lbMoveIn').onkeydown=e=>{if(e.key==='Enter')$('lbMoveGo').click()};
+  $('lbCover').onclick=async()=>{
+    const p=lbList[lbIdx];
+    for(const x of localPhotos)if(x.album===p.album&&!x.page&&x.cover&&x.id!==p.id){x.cover=false;try{await idb.put('photos',prec(x))}catch(e){}}
+    p.cover=!p.cover;try{await idb.put('photos',prec(p))}catch(e){}
+    showLb();toast(p.cover?'Set as album cover 🖼️':'Cover removed');renderGallery();
+  };
+  $('lbEdit').onclick=()=>openPE(lbList[lbIdx]);
+
+  // ---------- photos on a diary page ----------
+  async function renderEdPhotos(){
+    const ids=edPhotos.slice(),recs=[];
+    for(const id of ids){try{const r=await idb.get('photos',id);if(r)recs.push(r)}catch(e){}}
+    if(ids.join()!==edPhotos.join())return;
+    const G=$('edPhotos');G.innerHTML='';
+    recs.forEach((p,i)=>{
+      const w=document.createElement('div');w.className='ph';
+      const im=document.createElement('img');im.src=p.data;im.alt='Photo on this page';if(freshIds.has(p.id))im.className='develop';im.onclick=()=>openLb(recs,i);
+      const x=document.createElement('button');x.className='x';x.textContent='✕';x.setAttribute('aria-label','Remove photo from page');
+      x.onclick=ev=>{
+        ev.stopPropagation();edPhotos=edPhotos.filter(z=>z!==p.id);
+        if(pendingPh.includes(p.id)){idb.del('photos',p.id).catch(()=>{});pendingPh=pendingPh.filter(z=>z!==p.id)}else removedPh.push(p.id);
+        renderEdPhotos();queueDraft();
+      };
+      w.append(im,x);G.appendChild(w);
+    });
+    const add=document.createElement('button');add.className='add';add.innerHTML='<span>📷</span>Add photo';add.onclick=()=>$('pagePhotoFile').click();G.appendChild(add);
+  }
+  $('pagePhotoFile').onchange=async ev=>{
+    const files=[...ev.target.files];ev.target.value='';const ids=[];
+    for(const f of files){
+      try{const id='p'+uid();await idb.put('photos',{id,page:true,album:'',caption:'',data:await compress(f),added:Date.now()});edPhotos.push(id);pendingPh.push(id);ids.push(id)}
+      catch(e){toast('Could not open a photo')}
+    }
+    markFresh(ids);renderEdPhotos();queueDraft();
+  };
+
+  // ---------- on this day ----------
+  async function renderOTD(){
+    await loadPhotos();
+    const t=today0(),md=isoDay(t).slice(5),y=t.getFullYear();
+    const dateOf=p=>{if(p.page){const e=entries.find(x=>(x.photos||[]).includes(p.id));return e?e.date:null}return p.added?isoDay(new Date(p.added)):null};
+    const hits=localPhotos.map(p=>({p,d:dateOf(p)})).filter(x=>x.d&&x.d.slice(5)===md&&+x.d.slice(0,4)<y).sort((a,b)=>b.d.localeCompare(a.d));
+    if(!hits.length){$('otd').hidden=true;return}
+    const R=$('otdRow');R.innerHTML='';const list=hits.map(x=>x.p);
+    hits.forEach((x,i)=>{
+      const b=document.createElement('button');b.setAttribute('aria-label','Photo from '+niceDate(x.d));
+      const im=document.createElement('img');im.src=x.p.data;im.alt='';
+      const tag=document.createElement('i');const n=y-+x.d.slice(0,4);tag.textContent=n===1?'1 year ago':n+' years ago';
+      b.append(im,tag);b.onclick=()=>openLb(list,i);R.appendChild(b);
+    });
+    $('otd').hidden=false;
+  }
+
+  // ---------- slideshow ----------
+  let ssList=[],ssI=0,ssTimer=null,ssPaused=false,ssFlip=false,ssBox=null;
+  function startSlides(list){
+    if(!list.length)return;
+    ssList=list.slice();ssI=0;ssPaused=false;$('ssPlay').textContent='⏸';
+    $('ssA').className='';$('ssB').className='';$('ss').hidden=false;document.body.style.overflow='hidden';
+    showSlide();clearInterval(ssTimer);
+    ssTimer=setInterval(()=>{if(!ssPaused&&ssList.length>1){ssI=(ssI+1)%ssList.length;showSlide()}},4500);
+    applySsSound();
+  }
+  function showSlide(){
+    const p=ssList[ssI],cur=ssFlip?$('ssA'):$('ssB'),old=ssFlip?$('ssB'):$('ssA');ssFlip=!ssFlip;
+    cur.src=p.data;cur.classList.remove('on');void cur.offsetWidth;cur.classList.add('on');old.classList.remove('on');
+    $('ssCap').textContent=p.caption||'';
+  }
+  function applySsSound(){
+    clearInterval(ssBox);stopAmb();const v=$('ssSound').value;
+    if(v==='music'){musicBox(true);ssBox=setInterval(()=>musicBox(true),3400)}else if(v)startAmb(v);
+  }
+  function stopSlides(){clearInterval(ssTimer);clearInterval(ssBox);stopAmb();$('ss').hidden=true;document.body.style.overflow=$('lb').hidden?'':'hidden'}
+  $('ssSound').onchange=applySsSound;
+  $('ssPlay').onclick=()=>{ssPaused=!ssPaused;$('ssPlay').textContent=ssPaused?'▶':'⏸';$('ssPlay').setAttribute('aria-label',ssPaused?'Play':'Pause')};
+  $('ssClose').onclick=stopSlides;
+  $('ss').addEventListener('click',e=>{if(e.target.tagName==='IMG')$('ssPlay').click()});
+
+  // ---------- photo editor: filters, frames, stickers (saves a new copy) ----------
+  const PFILTERS=[['none','Original'],['vintage','Vintage'],['bw','B&W'],['warm','Warm'],['cool','Cool'],['rosy','Rosy'],['fade','Fade']];
+  const PFRAMES=[['none','None'],['polaroid','Polaroid'],['pink','Pink'],['hearts','Hearts']];
+  let pe=null,peDrag=null;
+  const loadImg=src=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src});
+  function filterRect(x,l,t,w,h,f){
+    if(f==='none')return;
+    const d=x.getImageData(l,t,w,h),a=d.data;
+    for(let i=0;i<a.length;i+=4){
+      let r=a[i],g=a[i+1],b=a[i+2];
+      if(f==='bw'){r=g=b=.299*r+.587*g+.114*b}
+      else if(f==='vintage'){const nr=.393*r+.769*g+.189*b,ng=.349*r+.686*g+.168*b,nb=.272*r+.534*g+.131*b;r=nr*.75+r*.25+8;g=ng*.75+g*.25;b=nb*.75+b*.25-12}
+      else if(f==='warm'){r=r*1.1+6;g=g*1.03;b=b*.86}
+      else if(f==='cool'){r=r*.9;b=b*1.12+6}
+      else if(f==='rosy'){r=r*1.07+14;g=g*.96+2;b=b*1.02+10}
+      else if(f==='fade'){r=r*.8+40;g=g*.8+36;b=b*.8+44}
+      a[i]=r;a[i+1]=g;a[i+2]=b;
+    }
+    x.putImageData(d,l,t);
+  }
+  function frameGeo(w,f){const u=w;return f==='polaroid'?{l:u*.05,t:u*.05,r:u*.05,b:u*.2}:f==='pink'?{l:u*.04,t:u*.04,r:u*.04,b:u*.04}:f==='hearts'?{l:u*.07,t:u*.07,r:u*.07,b:u*.07}:{l:0,t:0,r:0,b:0}}
+  function compose(src,withStk){
+    const w=src.width,h=src.height,g=frameGeo(w,pe.frame);
+    const c=document.createElement('canvas');c.width=Math.round(w+g.l+g.r);c.height=Math.round(h+g.t+g.b);
+    const x=c.getContext('2d');
+    if(pe.frame!=='none'){x.fillStyle=pe.frame==='polaroid'?'#fffdf9':pe.frame==='pink'?'#f5a3bd':'#fbd5e1';x.fillRect(0,0,c.width,c.height)}
+    x.drawImage(src,Math.round(g.l),Math.round(g.t),w,h);
+    filterRect(x,Math.round(g.l),Math.round(g.t),w,h,pe.filter);
+    if(pe.frame==='hearts'){
+      x.font=Math.round(g.l*.7)+'px serif';x.textAlign='center';x.textBaseline='middle';const st=g.l*1.15;
+      for(let px=g.l/2;px<c.width;px+=st){x.fillText('💗',px,g.t/2);x.fillText('💗',px,c.height-g.b/2)}
+      for(let py=g.t/2+st;py<c.height-st/2;py+=st){x.fillText('💗',g.l/2,py);x.fillText('💗',c.width-g.r/2,py)}
+    }
+    if(pe.frame==='polaroid'&&pe.p.caption){x.fillStyle='#4a2a36';x.font='700 '+Math.round(g.b*.34)+'px Caveat, cursive';x.textAlign='center';x.textBaseline='middle';x.fillText(pe.p.caption,c.width/2,c.height-g.b/2,c.width*.9)}
+    if(withStk)drawStk(x,g,w,h);
+    return{c,g,w,h};
+  }
+  function drawStk(x,g,w,h){
+    pe.stk.forEach((s,i)=>{
+      const fs=s.s/100*w;x.font=fs+'px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(s.e,g.l+s.x*w,g.t+s.y*h);
+      if(i===pe.sel&&!pe.final){x.strokeStyle='rgba(232,99,140,.95)';x.lineWidth=Math.max(2,w/250);x.setLineDash([6,4]);x.strokeRect(g.l+s.x*w-fs*.6,g.t+s.y*h-fs*.6,fs*1.2,fs*1.2);x.setLineDash([])}
+    });
+  }
+  function buildBase(){pe.base=compose(pe.small,false);drawPE()}
+  function drawPE(){const cv=$('peCv'),r=pe.base;cv.width=r.c.width;cv.height=r.c.height;const x=cv.getContext('2d');x.drawImage(r.c,0,0);drawStk(x,r.g,r.w,r.h)}
+  function paintPEChips(){
+    $('peFilters').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===pe.filter));
+    $('peFrames').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===pe.frame));
+  }
+  PFILTERS.forEach(([k,n])=>{const b=document.createElement('button');b.dataset.k=k;b.textContent=n;b.onclick=()=>{pe.filter=k;paintPEChips();buildBase()};$('peFilters').appendChild(b)});
+  PFRAMES.forEach(([k,n])=>{const b=document.createElement('button');b.dataset.k=k;b.textContent=n;b.onclick=()=>{pe.frame=k;paintPEChips();buildBase()};$('peFrames').appendChild(b)});
+  STICKERS.forEach(s=>{const b=document.createElement('button');b.className='em';b.textContent=s;b.setAttribute('aria-label','Add sticker '+s);
+    b.onclick=()=>{pe.stk.push({e:s,x:.5,y:.5,s:+$('peSize').value});pe.sel=pe.stk.length-1;drawPE()};$('peStk').appendChild(b)});
+  async function openPE(p){
+    let img;try{img=await loadImg(p.data)}catch(e){toast('Could not open this photo');return}
+    const k=Math.min(1,720/Math.max(img.width,img.height));
+    const small=document.createElement('canvas');small.width=Math.round(img.width*k);small.height=Math.round(img.height*k);
+    small.getContext('2d').drawImage(img,0,0,small.width,small.height);
+    pe={p,img,small,filter:'none',frame:'none',stk:[],sel:-1,base:null,final:false};
+    $('peSize').value=16;paintPEChips();buildBase();$('pe').hidden=false;
+  }
+  function closePE(){$('pe').hidden=true;pe=null;peDrag=null}
+  function peHit(e){const cv=$('peCv'),rc=cv.getBoundingClientRect(),k=cv.width/rc.width,px=(e.clientX-rc.left)*k,py=(e.clientY-rc.top)*k,r=pe.base;return{x:(px-r.g.l)/r.w,y:(py-r.g.t)/r.h,px,py}}
+  $('peCv').addEventListener('pointerdown',e=>{
+    if(!pe)return;const q=peHit(e),r=pe.base;let hit=-1;
+    for(let i=pe.stk.length-1;i>=0;i--){const s=pe.stk[i],fs=s.s/100*r.w;if(Math.abs(r.g.l+s.x*r.w-q.px)<fs*.7&&Math.abs(r.g.t+s.y*r.h-q.py)<fs*.7){hit=i;break}}
+    pe.sel=hit;
+    if(hit>=0){$('peSize').value=pe.stk[hit].s;peDrag={i:hit,dx:pe.stk[hit].x-q.x,dy:pe.stk[hit].y-q.y};try{$('peCv').setPointerCapture(e.pointerId)}catch(x){}}
+    drawPE();
+  });
+  $('peCv').addEventListener('pointermove',e=>{if(!peDrag||!pe)return;const q=peHit(e),s=pe.stk[peDrag.i];s.x=Math.min(1,Math.max(0,q.x+peDrag.dx));s.y=Math.min(1,Math.max(0,q.y+peDrag.dy));drawPE()});
+  ['pointerup','pointercancel'].forEach(ev=>$('peCv').addEventListener(ev,()=>{peDrag=null}));
+  $('peSize').oninput=()=>{if(!pe)return;const s=pe.stk[pe.sel>=0?pe.sel:pe.stk.length-1];if(s){s.s=+$('peSize').value;drawPE()}};
+  $('peDel').onclick=()=>{if(!pe||!pe.stk.length)return;pe.stk.splice(pe.sel>=0?pe.sel:pe.stk.length-1,1);pe.sel=-1;drawPE()};
+  $('peCancel').onclick=closePE;
+  $('peSave').onclick=async()=>{
+    if(!pe)return;$('peSave').disabled=true;
+    try{
+      pe.final=true;pe.sel=-1;let c=compose(pe.img,true).c;
+      const k=Math.min(1,1800/Math.max(c.width,c.height));
+      if(k<1){const c2=document.createElement('canvas');c2.width=Math.round(c.width*k);c2.height=Math.round(c.height*k);c2.getContext('2d').drawImage(c,0,0,c2.width,c2.height);c=c2}
+      const src=pe.p,id='p'+uid();
+      await idb.put('photos',{id,album:src.page?'Edited':(src.album||'Photos'),caption:src.caption||'',data:c.toDataURL('image/jpeg',0.88),added:Date.now()});
+      markFresh([id]);closePE();closeLb();toast('Saved as a new photo ✨');
+      if(!$('tab-gallery').hidden)renderGallery();
+    }catch(e){toast('Could not save the photo')}
+    $('peSave').disabled=false;
+  };
+
+  // ---------- collage ----------
+  let colPick=[];
+  function renderCollagePick(photos){
+    const G=$('colGrid');G.innerHTML='';colPick=colPick.filter(id=>photos.some(p=>p.id===id));
+    if(!photos.length)G.innerHTML='<div class="empty"><b>No photos yet</b>Add some photos first.</div>';
+    photos.forEach(p=>{
+      const k=colPick.indexOf(p.id),b=document.createElement('button');b.className='thumb'+(k>=0?' pick':'');
+      b.setAttribute('aria-pressed',k>=0);b.setAttribute('aria-label',(p.caption||p.album||'Photo')+(k>=0?', picked '+(k+1):''));
+      const im=document.createElement('img');im.src=p.data;im.alt='';im.loading='lazy';b.appendChild(im);
+      if(k>=0){const n=document.createElement('span');n.className='num';n.textContent=k+1;b.appendChild(n)}
+      b.onclick=()=>{const j=colPick.indexOf(p.id);if(j>=0)colPick.splice(j,1);else if(colPick.length<4)colPick.push(p.id);else{toast('You can pick up to 4 photos');return}renderCollagePick(photos)};
+      G.appendChild(b);
+    });
+    $('colInfo').textContent=colPick.length?colPick.length+' of 4 picked':'Pick 2 to 4 photos';
+    $('colGo').disabled=colPick.length<2;
+    $('colGo').onclick=()=>makeCollage(colPick.map(id=>photos.find(p=>p.id===id)));
+  }
+  function drawCover(x,img,dx,dy,dw,dh){const s=Math.max(dw/img.width,dh/img.height),sw=dw/s,sh=dh/s;x.drawImage(img,(img.width-sw)/2,(img.height-sh)/2,sw,sh,dx,dy,dw,dh)}
+  async function makeCollage(list){
+    $('colGo').disabled=true;
+    try{
+      const imgs=await Promise.all(list.map(p=>loadImg(p.data)));
+      const S=1600,G=28,half=(S-3*G)/2,c=document.createElement('canvas');c.width=S;c.height=S;
+      const x=c.getContext('2d');x.fillStyle='#fbd5e1';x.fillRect(0,0,S,S);
+      const boxes=imgs.length===2?[[G,G,half,S-2*G],[2*G+half,G,half,S-2*G]]
+        :imgs.length===3?[[G,G,half,S-2*G],[2*G+half,G,half,half],[2*G+half,2*G+half,half,half]]
+        :[[G,G,half,half],[2*G+half,G,half,half],[G,2*G+half,half,half],[2*G+half,2*G+half,half,half]];
+      imgs.forEach((im,i)=>{const [bx,by,bw,bh]=boxes[i];x.save();x.beginPath();if(x.roundRect)x.roundRect(bx,by,bw,bh,24);else x.rect(bx,by,bw,bh);x.clip();drawCover(x,im,bx,by,bw,bh);x.restore()});
+      x.font='72px serif';x.textAlign='center';x.textBaseline='middle';x.fillText('💗',S/2,S/2);
+      const id='p'+uid();
+      await idb.put('photos',{id,album:'Collages',caption:'',data:c.toDataURL('image/jpeg',0.88),added:Date.now()});
+      markFresh([id]);colPick=[];galView='albums';toast('Collage saved in “Collages” 🧩');
+      await renderGallery();const pc=localPhotos.find(p=>p.id===id);if(pc)openLb([pc],0);
+    }catch(e){toast('Could not make the collage')}
+    $('colGo').disabled=colPick.length<2;
+  }
+
   // ---------- copy with photos ----------
   $('giftBtn').onclick=async()=>{
     await loadPhotos();
-    const photos=allPhotos().map(p=>({id:p.id,album:p.album,caption:p.caption||'',data:p.data,added:p.added||0}));
+    const photos=allPhotos().filter(p=>!p.page).map(p=>({id:p.id,album:p.album,caption:p.caption||'',data:p.data,added:p.added||0}));
     if(!photos.length){toast('Add some photos first');return}
     const json=JSON.stringify({photos}).replace(/</g,'\\u003c');
     const html=SRC.replace(/(<script id="giftData" type="application\/json">)[\s\S]*?(<\/script>)/,(m,a,b)=>a+json+b);
@@ -2073,7 +2467,7 @@
         if(data.room&&data.room.pin&&!rawLoad(K.room,null))rawSave(K.room,data.room);
         if(Array.isArray(data.photos)){
           await loadPhotos();const have=new Set(localPhotos.map(p=>p.id));
-          for(const p of data.photos)if(p&&p.id&&typeof p.data==='string'&&p.data.startsWith('data:image/')&&!have.has(p.id)){await idb.put('photos',{id:String(p.id),album:String(p.album||'Photos'),caption:String(p.caption||''),data:p.data,added:p.added||0});pics++}
+          for(const p of data.photos)if(p&&p.id&&typeof p.data==='string'&&p.data.startsWith('data:image/')&&!have.has(p.id)){await idb.put('photos',{id:String(p.id),album:p.page?'':String(p.album||'Photos'),caption:String(p.caption||''),data:p.data,added:p.added||0,fav:!!p.fav,cover:!!p.cover,page:!!p.page});pics++}
         }
         if(Array.isArray(data.audio)){
           for(const a of data.audio)if(a&&a.id&&typeof a.data==='string'&&a.data.startsWith('data:audio/')){
