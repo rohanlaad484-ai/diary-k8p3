@@ -118,6 +118,22 @@
   .nav .fab{justify-self:center;width:58px;height:58px;border-radius:50%;background:var(--rose);color:#fff;font-size:2rem;font-weight:400;margin-top:-34px;place-items:center;box-shadow:0 8px 20px rgba(232,99,140,.45);padding:0}
   .nav .fab:hover{transform:translateY(-2px)}
 
+  /* More tab: one tidy list, each group opens on tap */
+  .more{display:grid;gap:10px}
+  .grp{background:var(--paper);border-radius:20px;box-shadow:0 4px 16px rgba(232,99,140,.1);overflow:hidden}
+  .grp summary{list-style:none;display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
+  .grp summary::-webkit-details-marker{display:none}
+  .grp summary::after{content:"›";margin-left:auto;font-size:1.5rem;color:var(--muted);transition:transform .2s}
+  .grp[open] summary::after{transform:rotate(90deg)}
+  .grp summary:focus-visible{outline:3px solid var(--rose);outline-offset:-3px}
+  .gi{width:40px;height:40px;border-radius:12px;background:var(--rose-soft);display:grid;place-items:center;font-size:1.2rem;flex:0 0 40px}
+  .gt{display:grid;min-width:0}
+  .gt b{font-size:1rem;display:flex;align-items:center;gap:6px}
+  .gt small{color:var(--muted);font-size:.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gb{display:grid;gap:10px;padding:0 16px 16px}
+  .lbl{font-size:.74rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--danger);display:inline-block}
+  .danger-grp .gi{background:transparent;border:2px solid var(--line)}
   /* security + extras */
   .cover .hrt{display:inline-block;padding:10px 18px;margin:-10px auto -6px;border-radius:999px}
   .lenrow{display:flex;gap:6px}
@@ -580,114 +596,123 @@
 
     <!-- More / settings -->
     <div id="tab-settings" hidden>
-      <div class="card settings">
-        <section>
-          <h2>Your name</h2>
-          <div class="row">
-            <input id="nameIn" placeholder="Your name" maxlength="30" style="max-width:260px">
-            <button id="nameSave">Save</button>
+      <div class="more">
+        <details class="grp">
+          <summary><span class="gi">🎨</span><span class="gt"><b>Personalise</b><small>Name, writing font, day &amp; night, music</small></span></summary>
+          <div class="gb">
+            <div class="lbl">Your name</div>
+            <div class="row">
+              <input id="nameIn" placeholder="Your name" maxlength="30" style="flex:1 1 160px;width:auto">
+              <button id="nameSave">Save</button>
+            </div>
+            <div class="lbl">Writing font</div>
+            <div class="fonts" id="fonts"></div>
+            <div class="lbl">Look &amp; sound</div>
+            <div class="row">
+              <select id="themeSel" aria-label="Theme">
+                <option value="auto">Day &amp; night (automatic)</option>
+                <option value="day">Always day</option>
+                <option value="night">Always night</option>
+              </select>
+              <label class="check"><input type="checkbox" id="musicChk"> Music box when opening</label>
+            </div>
           </div>
-        </section>
-        <section>
-          <h2>Look &amp; sound</h2>
-          <div class="row">
-            <select id="themeSel" aria-label="Theme">
-              <option value="auto">Day &amp; night (automatic)</option>
-              <option value="day">Always day</option>
-              <option value="night">Always night</option>
-            </select>
-            <label class="check"><input type="checkbox" id="musicChk"> Music box when opening</label>
+        </details>
+
+        <details class="grp">
+          <summary><span class="gi">📚</span><span class="gt"><b>Notebooks</b><small>Personal, College, Travel…</small></span></summary>
+          <div class="gb">
+            <div class="stack" id="nbList"></div>
+            <div class="row">
+              <input id="nbNew" placeholder="New notebook, e.g. College" maxlength="30" style="flex:1 1 200px;width:auto">
+              <button id="nbAdd">Add</button>
+            </div>
           </div>
-        </section>
-        <section>
-          <h2>Security</h2>
-          <div class="sub">Secret question, to reset the PIN if you ever forget it. <b id="secStatus"></b></div>
-          <div class="row">
-            <input id="secQ" placeholder="Question, e.g. My first school's name?" maxlength="80" style="flex:1 1 220px;width:auto">
-            <input id="secA" type="password" placeholder="Answer" maxlength="60" autocomplete="off" style="flex:1 1 150px;width:auto">
-            <button id="secSave">Save</button>
+        </details>
+
+        <details class="grp" id="grpSec">
+          <summary><span class="gi">🔐</span><span class="gt"><b>Security <span class="dot" id="secDot" hidden></span></b><small>Secret question, fingerprint, change PIN</small></span></summary>
+          <div class="gb">
+            <div class="lbl">Secret question <b id="secStatus"></b></div>
+            <div class="sub">Lets you reset the PIN if you ever forget it.</div>
+            <div class="row">
+              <input id="secQ" placeholder="Question, e.g. My first school's name?" maxlength="80" style="flex:1 1 220px;width:auto">
+              <input id="secA" type="password" placeholder="Answer" maxlength="60" autocomplete="off" style="flex:1 1 150px;width:auto">
+              <button id="secSave">Save</button>
+            </div>
+            <div class="lbl">Fingerprint</div>
+            <div class="row" id="bioRow"></div>
+            <div class="lbl">Change PIN</div>
+            <div class="row">
+              <input id="newPin" type="password" inputmode="numeric" maxlength="6" placeholder="New 4 or 6-digit PIN" autocomplete="off" style="flex:1 1 160px;width:auto">
+              <button id="savePin">Save PIN</button>
+            </div>
+            <div class="sub">The diary locks itself after 5 minutes without use.</div>
           </div>
-          <div class="row" id="bioRow"></div>
-          <div class="sub">The diary locks itself after 5 minutes without use.</div>
-        </section>
-        <section>
-          <h2>App</h2>
-          <div class="row" id="installRow"></div>
-          <div class="row"><button id="tourBtn">✨ Show the tour again</button></div>
-        </section>
-        <section>
-          <h2>Recently deleted</h2>
-          <div class="sub">Deleted pages stay here for 30 days.</div>
-          <div class="stack" id="trashList"></div>
-        </section>
-        <section>
-          <h2>Writing font</h2>
-          <div class="fonts" id="fonts"></div>
-        </section>
-        <section>
-          <h2>Notebooks</h2>
-          <div class="stack" id="nbList"></div>
-          <div class="row">
-            <input id="nbNew" placeholder="New notebook, e.g. College" maxlength="30" style="flex:1 1 200px;width:auto">
-            <button id="nbAdd">Add notebook</button>
+        </details>
+
+        <details class="grp">
+          <summary><span class="gi">💾</span><span class="gt"><b>Backup</b><small>Save a locked copy, or restore one</small></span></summary>
+          <div class="gb">
+            <div class="sub">The backup file is locked with a password you choose. Keep that password safe, it cannot be recovered.</div>
+            <div class="row">
+              <input id="bkPw" type="password" placeholder="Backup password" autocomplete="new-password" style="flex:1 1 150px;width:auto">
+              <input id="bkPw2" type="password" placeholder="Same password again" autocomplete="new-password" style="flex:1 1 150px;width:auto">
+            </div>
+            <div class="row">
+              <button class="primary" id="exportBtn">Download backup</button>
+              <button id="importBtn">Restore</button>
+              <input type="file" id="importFile" accept=".json,application/json" hidden>
+            </div>
+            <div class="row form" id="rsBox" hidden>
+              <span class="sub" style="flex:1 1 100%">This backup is locked. Enter its password:</span>
+              <input id="rsPw" type="password" placeholder="Backup password" autocomplete="off" style="flex:1 1 160px;width:auto">
+              <button class="primary" id="rsGo">Restore</button>
+            </div>
+            <div class="sub" id="storeInfo" style="white-space:pre-line">Checking…</div>
           </div>
-        </section>
-        <section>
-          <h2>Diary book (PDF)</h2>
-          <div class="sub">Makes a pretty book of your pages. In the print window choose “Save as PDF”, or print it.</div>
-          <div class="row">
-            <select id="bookMode" aria-label="Book type"><option value="year">Whole year</option><option value="day">One day</option></select>
-            <select id="bookYear" aria-label="Year"></select>
-            <input id="bookDay" type="date" aria-label="Day" hidden style="width:auto">
-            <select id="bookNb" aria-label="Notebook"></select>
-            <button class="primary" id="bookBtn">Make PDF</button>
+        </details>
+
+        <details class="grp">
+          <summary><span class="gi">📖</span><span class="gt"><b>Diary book</b><small>Make a PDF of a year or a day</small></span></summary>
+          <div class="gb">
+            <div class="sub">In the print window choose “Save as PDF”, or print it.</div>
+            <div class="row">
+              <select id="bookMode" aria-label="Book type"><option value="year">Whole year</option><option value="day">One day</option></select>
+              <select id="bookYear" aria-label="Year"></select>
+              <input id="bookDay" type="date" aria-label="Day" hidden style="width:auto">
+              <select id="bookNb" aria-label="Notebook"></select>
+              <button class="primary" id="bookBtn">Make PDF</button>
+            </div>
           </div>
-        </section>
-        <section>
-          <h2>Copy with photos</h2>
-          <div class="sub">Creates a new copy of this diary with every photo built in. Diary pages and PIN are not included. Photos in that copy are not locked, so share it carefully.</div>
-          <div class="row"><button id="giftBtn">Create copy with photos</button></div>
-        </section>
-        <section>
-          <h2>Backup 🔐</h2>
-          <div class="sub">Everything lives only on this phone. The backup file is locked with a password you choose, so nobody can open it without that password. Keep the password safe, it cannot be recovered.</div>
-          <div class="row">
-            <input id="bkPw" type="password" placeholder="Backup password" autocomplete="new-password" style="flex:1 1 150px;width:auto">
-            <input id="bkPw2" type="password" placeholder="Same password again" autocomplete="new-password" style="flex:1 1 150px;width:auto">
+        </details>
+
+        <details class="grp">
+          <summary><span class="gi">🗑️</span><span class="gt"><b>Recently deleted</b><small id="trashSub">Deleted pages stay for 30 days</small></span></summary>
+          <div class="gb"><div class="stack" id="trashList"></div></div>
+        </details>
+
+        <details class="grp">
+          <summary><span class="gi">📲</span><span class="gt"><b>App &amp; help</b><small>Install on the home screen, see the tour</small></span></summary>
+          <div class="gb">
+            <div class="row" id="installRow"></div>
+            <div class="row"><button id="tourBtn">✨ Show the tour again</button></div>
           </div>
-          <div class="row">
-            <button class="primary" id="exportBtn">Download locked backup</button>
-            <button id="importBtn">Restore from backup</button>
-            <input type="file" id="importFile" accept=".json,application/json" hidden>
+        </details>
+
+        <details class="grp danger-grp">
+          <summary><span class="gi">⚠️</span><span class="gt"><b>Reset diary</b><small>Erase everything on this phone</small></span></summary>
+          <div class="gb">
+            <div class="sub">This permanently erases all pages, lines, photos, voice notes, dates, the secret room and the PIN from this phone. It cannot be undone, so take a backup first if you want one.</div>
+            <div class="row"><button class="danger" id="rstBtn">Erase everything</button></div>
+            <div class="row form" id="rstBox" hidden>
+              <input id="rstPin" type="password" inputmode="numeric" maxlength="6" placeholder="Your PIN" autocomplete="off" style="flex:1 1 120px;width:auto">
+              <input id="rstWord" placeholder="Type RESET" autocomplete="off" style="flex:1 1 120px;width:auto">
+              <button class="primary" id="rstGo">Yes, erase</button>
+              <button class="ghost" id="rstNo">Cancel</button>
+            </div>
           </div>
-          <div class="row form" id="rsBox" hidden>
-            <span class="sub" style="flex:1 1 100%">This backup is locked. Enter its password:</span>
-            <input id="rsPw" type="password" placeholder="Backup password" autocomplete="off" style="flex:1 1 160px;width:auto">
-            <button class="primary" id="rsGo">Restore</button>
-          </div>
-        </section>
-        <section>
-          <h2>Storage</h2>
-          <div class="sub" id="storeInfo" style="white-space:pre-line">Checking…</div>
-        </section>
-        <section>
-          <h2>Change PIN</h2>
-          <div class="row">
-            <input id="newPin" type="password" inputmode="numeric" maxlength="6" placeholder="New 4 or 6-digit PIN" autocomplete="off" style="max-width:220px">
-            <button id="savePin">Save PIN</button>
-          </div>
-        </section>
-        <section>
-          <h2>Reset diary</h2>
-          <div class="sub">This permanently erases all pages, lines, photos, voice notes, dates, the secret room and the PIN from this phone, and the diary starts fresh. This cannot be undone, so take a backup first if you want one.</div>
-          <div class="row"><button class="danger" id="rstBtn">Erase everything</button></div>
-          <div class="row form" id="rstBox" hidden>
-            <input id="rstPin" type="password" inputmode="numeric" maxlength="6" placeholder="Your PIN" autocomplete="off" style="flex:1 1 120px;width:auto">
-            <input id="rstWord" placeholder="Type RESET" autocomplete="off" style="flex:1 1 120px;width:auto">
-            <button class="primary" id="rstGo">Yes, erase</button>
-            <button class="ghost" id="rstNo">Cancel</button>
-          </div>
-        </section>
+        </details>
       </div>
     </div>
 
@@ -1430,7 +1455,7 @@
         ['Continue writing','primary',()=>openDraft(d)],
         ['Discard','ghost',()=>{(d.pending||[]).forEach(id=>idb.del('audio',id).catch(()=>{}));clearDraft();renderBanners()}]]);
     if(vault&&!vault.rec)
-      banner('🔐 Set a secret question, so you can reset your PIN if you forget it.',[['Set it now','primary',()=>{showTab('settings');setTimeout(()=>$('secQ').focus(),50)}]]);
+      banner('🔐 Set a secret question, so you can reset your PIN if you forget it.',[['Set it now','primary',()=>{showTab('settings');$('grpSec').open=true;setTimeout(()=>$('secQ').focus(),50)}]]);
     const since=Math.max(settings.lastBackup||0,settings.since||0),days=Math.floor((Date.now()-since)/DAY);
     if(entries.length&&days>=14&&Date.now()-(settings.backupSnooze||0)>3*DAY)
       banner('💾 It has been '+days+' days since your last backup.',[
@@ -1667,7 +1692,8 @@
   }
   function renderTrash(){
     const T=$('trashList');T.innerHTML='';
-    if(!trash.length){T.innerHTML='<div class="sub">Nothing here.</div>';return}
+    $('trashSub').textContent=trash.length?plural(trash.length,'page')+' · kept for 30 days':'Nothing here';
+    if(!trash.length){T.innerHTML='<div class="sub">Nothing here. Deleted pages stay here for 30 days.</div>';return}
     trash.slice().sort((a,b)=>b.deletedAt-a.deletedAt).forEach(t=>{
       const row=document.createElement('div');row.className='drow';
       const left=document.createElement('div');
@@ -1686,7 +1712,7 @@
   function renderSettings(){
     $('nameIn').value=settings.name||'';
     $('themeSel').value=settings.theme||'auto';$('musicChk').checked=!!settings.music;
-    const sec=vault&&vault.rec;$('secStatus').textContent=sec?'✓ Set':'Not set yet';
+    const sec=vault&&vault.rec;$('secStatus').textContent=sec?'✓ Set':'· not set yet';$('secDot').hidden=!!sec;
     if(sec&&!$('secQ').value)$('secQ').value=sec.q;
     const BR=$('bioRow');BR.innerHTML='';
     if(bioOK){
@@ -2394,16 +2420,6 @@
     }catch(e){toast('Could not make the collage')}
     $('colGo').disabled=colPick.length<2;
   }
-
-  // ---------- copy with photos ----------
-  $('giftBtn').onclick=async()=>{
-    await loadPhotos();
-    const photos=allPhotos().filter(p=>!p.page).map(p=>({id:p.id,album:p.album,caption:p.caption||'',data:p.data,added:p.added||0}));
-    if(!photos.length){toast('Add some photos first');return}
-    const json=JSON.stringify({photos}).replace(/</g,'\\u003c');
-    const html=SRC.replace(/(<script id="giftData" type="application\/json">)[\s\S]*?(<\/script>)/,(m,a,b)=>a+json+b);
-    download(html,'my-diary-with-photos.html','text/html');toast('Copy created with '+plural(photos.length,'photo'));
-  };
 
   // ---------- backup (locked with its own password) ----------
   $('exportBtn').onclick=async()=>{
