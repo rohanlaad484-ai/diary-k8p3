@@ -615,6 +615,17 @@
             <button id="savePin">Save PIN</button>
           </div>
         </section>
+        <section>
+          <h2>Diary reset karo</h2>
+          <div class="sub">Is phone se saare pages, lines, photos, voice notes, dates, secret room aur PIN hamesha ke liye mit jayenge, aur diary bilkul nayi khulegi. Yeh wapas nahi hota, chaho to pehle backup le lo.</div>
+          <div class="row"><button class="danger" id="rstBtn">Sab kuch mitao</button></div>
+          <div class="row form" id="rstBox" hidden>
+            <input id="rstPin" type="password" inputmode="numeric" maxlength="6" placeholder="Apna PIN" autocomplete="off" style="flex:1 1 120px;width:auto">
+            <input id="rstWord" placeholder="RESET likho" autocomplete="off" style="flex:1 1 120px;width:auto">
+            <button class="primary" id="rstGo">Haan, mitao</button>
+            <button class="ghost" id="rstNo">Rehne do</button>
+          </div>
+        </section>
       </div>
     </div>
 
@@ -2185,6 +2196,20 @@
   $('rmDelYes').onclick=async()=>{roomNotes=roomNotes.filter(x=>x.id!==rmEdit);try{await saveRoom()}catch(e){}toast('Delete ho gaya');renderRoom()};
   $('rmLock').onclick=()=>lockNow();
 
+
+  // ---------- reset: wipe everything on this phone, only with the PIN ----------
+  $('rstBtn').onclick=()=>{$('rstBox').hidden=false;$('rstPin').value='';$('rstWord').value='';$('rstPin').focus()};
+  $('rstNo').onclick=()=>{$('rstBox').hidden=true};
+  $('rstGo').onclick=async()=>{
+    if($('rstWord').value.trim().toUpperCase()!=='RESET'){toast('Confirm karne ke liye RESET likho');$('rstWord').focus();return}
+    $('rstGo').disabled=true;
+    let ok=false;try{await openKey($('rstPin').value,vault.pin);ok=true}catch(e){}
+    if(!ok){$('rstGo').disabled=false;toast('PIN galat hai');return}
+    try{Object.keys(localStorage).filter(k=>k.startsWith('myDiary.')).forEach(k=>localStorage.removeItem(k))}catch(e){}
+    await new Promise(r=>{try{const q=indexedDB.deleteDatabase('myDiary');q.onsuccess=q.onerror=q.onblocked=()=>r()}catch(e){r()}});
+    try{if(window.caches){const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('my-diary')).map(k=>caches.delete(k)))}}catch(e){}
+    $('veil').hidden=false;location.reload();
+  };
   applyFont();
   paintHello();
   setupLock();
