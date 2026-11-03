@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e8638c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="My Diary">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>My Diary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Kalam:wght@400;700&family=Nunito:wght@400;600;700&family=Patrick+Hand&display=swap">
+<style>
+  /* Layout: single soft column, like pages of a pink notebook */
+  :root{
+    --bg:#fff5f8; --paper:#ffffff; --ink:#4a2a36; --muted:#9a7280;
+    --rose:#e8638c; --rose-soft:#fbd5e1; --line:#f6dde6; --danger:#c94160;
+    --h1:#fbd5e1; --h2:#f5a3bd; --h3:#ec7a9d; --h4:#d94a78;
+    --hand:"Caveat","Segoe Script",cursive;
+    --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --entry:"Patrick Hand","Comic Sans MS",cursive; --entry-size:21px;
+  }
+  /* Night: deep plum sky with stars, switched on automatically after 7 pm */
+  html[data-time="night"]{
+    --bg:#1d1630; --paper:#2a2140; --ink:#f3e6ee; --muted:#b9a3c4;
+    --rose:#ff8fb3; --rose-soft:#4a3358; --line:#3d3052; --danger:#ff8fa8;
+    --h1:#5a3a66; --h2:#8a4f86; --h3:#c0609a; --h4:#ff8fb3; color-scheme:dark;
+  }
+  html[data-time="night"] body{
+    background-image:radial-gradient(1.5px 1.5px at 20px 30px,#ffffffaa,transparent),radial-gradient(1px 1px at 90px 120px,#ffffffcc,transparent),
+      radial-gradient(1.5px 1.5px at 160px 60px,#ffffff88,transparent),radial-gradient(1px 1px at 210px 190px,#ffffffbb,transparent),
+      radial-gradient(2px 2px at 60px 200px,#ffd6e6aa,transparent);
+    background-size:240px 230px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg);
+    background-image:radial-gradient(circle at 20px 20px, var(--rose-soft) 1.5px, transparent 1.6px);
+    background-size:40px 40px;
+    color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.6;
+    min-height:100vh;
+    padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+  }
+  .wrap{max-width:440px;margin:0 auto;padding-block:20px calc(120px + env(safe-area-inset-bottom,0px))}
+  h1,h2{font-family:var(--hand);font-weight:700;margin:0;color:var(--rose);text-wrap:balance}
+  h1{font-size:3rem;line-height:1}
+  h2{font-size:2rem;line-height:1.1}
+  button,input,select{font:inherit;color:inherit}
+  button{cursor:pointer;border:none;border-radius:999px;padding:10px 18px;font-weight:700;background:var(--rose-soft);color:var(--ink);transition:transform .15s,background .15s}
+  button:hover{transform:translateY(-1px)}
+  button:focus-visible,input:focus-visible,select:focus-visible,.page:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+  .primary{background:var(--rose);color:#fff}
+  .ghost{background:transparent;color:var(--muted);padding:8px 12px}
+  .danger{background:transparent;color:var(--danger)}
+  input,select{width:100%;border:2px solid var(--line);background:var(--paper);border-radius:14px;padding:10px 14px}
+  select{width:auto}
+  [hidden]{display:none!important}
+  .sub{color:var(--muted);font-size:.92rem}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .row > *{min-width:0}
+  .card{background:var(--paper);border-radius:22px;padding:20px;box-shadow:0 6px 24px rgba(232,99,140,.12)}
+  .stack{display:grid;gap:14px}
+
+  /* Lock screen */
+  /* Lock = a real diary: cover first, PIN on the first page */
+  #lock{min-height:85vh;display:grid;place-items:center;align-content:center;gap:14px;text-align:center}
+  .book{position:relative;width:min(310px,100%);min-height:560px;perspective:1200px}
+  .firstpage{position:absolute;inset:0;border-radius:10px 22px 22px 10px;background-color:var(--paper);
+    background-image:repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px);background-position:0 18px;
+    box-shadow:10px 12px 28px rgba(122,40,70,.22);padding:22px 14px 16px 30px;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .45s .25s}
+  .firstpage::before{content:"";position:absolute;left:20px;top:0;bottom:0;width:2px;background:var(--h2)}
+  .cover{position:absolute;inset:0;width:100%;border-radius:10px 22px 22px 10px;padding:0;cursor:pointer;
+    background:linear-gradient(110deg,#c94d77 0 8%,#e8638c 8% 100%);box-shadow:12px 14px 30px rgba(122,40,70,.35),inset -6px 0 0 rgba(255,255,255,.15);
+    display:grid;place-items:center;transform-origin:left center;transition:transform .8s cubic-bezier(.4,.1,.2,1),opacity .5s .3s;z-index:2}
+  .cover:hover{transform:none}
+  .cover::before{content:"";position:absolute;inset:18px 18px 18px 34px;border:2px dashed rgba(255,255,255,.6);border-radius:8px 14px 14px 8px}
+  .cover .ct{color:#fff;display:grid;gap:4px}
+  .cover .ct b{font-family:var(--hand);font-size:3.2rem;line-height:1;font-weight:700}
+  .cover .ct span{font-size:1rem;font-weight:700;opacity:.92;letter-spacing:.04em}
+  .cover .hrt{font-size:2rem;color:#fff;animation:beat 1.6s infinite}
+  .strap{position:absolute;right:-10px;top:66%;transform:translateY(-50%);width:70px;height:40px;background:#fff;border-radius:12px 0 0 12px;display:grid;place-items:center;font-size:1.2rem;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+  .book.open .cover{transform:rotateY(-108deg);opacity:0;pointer-events:none}
+  .book.open .firstpage{opacity:1;pointer-events:auto}
+  .tapnote{font-weight:800;color:var(--rose);transition:opacity .3s}
+  .book.open + .tapnote{opacity:0}
+  .lockbox{display:grid;gap:10px;justify-items:center;width:100%}
+  .lockbox .t{font-family:var(--hand);font-size:2.2rem;color:var(--rose);font-weight:700;line-height:1}
+
+  /* Inside = app style: home cards + bottom bar */
+  .iconbtn{width:44px;height:44px;padding:0;border-radius:14px;background:var(--paper);box-shadow:0 2px 0 var(--line);font-size:1.15rem}
+  .today{width:100%;text-align:left;display:grid;gap:6px;border-radius:24px;padding:18px;color:#fff;
+    background:linear-gradient(135deg,#e8638c,#f08fae);box-shadow:0 10px 24px rgba(232,99,140,.35);margin-bottom:12px}
+  .today:hover{transform:translateY(-2px)}
+  .today small{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+  .today b{font-family:var(--hand);font-size:1.9rem;line-height:1.05;font-weight:700}
+  .today span{justify-self:start;background:rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-weight:800;font-size:.88rem}
+  .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  .qtile{background:var(--paper);border-radius:20px;padding:12px 14px;text-align:left;display:grid;gap:4px;align-content:start;font-weight:400;box-shadow:0 4px 14px rgba(232,99,140,.1);min-width:0}
+  .qtile small{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .qtile b{font-family:var(--entry);font-size:1.05rem;font-weight:400;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+  .stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .stats span{background:var(--paper);border-radius:999px;padding:5px 12px;font-size:.85rem;font-weight:800;box-shadow:0 2px 0 var(--line)}
+  .sec{margin:6px 0 8px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}
+  .back{margin:0 0 8px -8px}
+  .nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:30;
+    width:min(408px,calc(100% - 24px));height:66px;background:var(--paper);border-radius:26px;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;
+    box-shadow:0 -2px 22px rgba(232,99,140,.22)}
+  .nav button{background:transparent;padding:6px 0;border-radius:16px;display:grid;justify-items:center;gap:1px;color:var(--muted)}
+  .nav button:hover{transform:none}
+  .nav button span{font-size:1.25rem;line-height:1.1}
+  .nav button small{font-size:.66rem;font-weight:800;letter-spacing:.03em}
+  .nav button[aria-pressed="true"]{color:var(--rose)}
+  .nav button[aria-pressed="true"] small::after{content:"";display:block;width:5px;height:5px;border-radius:50%;background:var(--rose);margin:2px auto 0}
+  .nav .fab{justify-self:center;width:58px;height:58px;border-radius:50%;background:var(--rose);color:#fff;font-size:2rem;font-weight:400;margin-top:-34px;place-items:center;box-shadow:0 8px 20px rgba(232,99,140,.45);padding:0}
+  .nav .fab:hover{transform:translateY(-2px)}
+
+  /* security + extras */
+  .cover .hrt{display:inline-block;padding:10px 18px;margin:-10px auto -6px;border-radius:999px}
+  .lenrow{display:flex;gap:6px}
+  .lenrow button{padding:5px 12px;font-size:.82rem;background:var(--bg)}
+  .lenrow button[aria-pressed="true"]{background:var(--rose);color:#fff}
+  .snack{position:fixed;z-index:61;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));
+    background:var(--ink);color:var(--bg);border-radius:999px;padding:6px 6px 6px 18px;display:flex;gap:12px;align-items:center;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.25);max-width:92vw}
+  .snack button{background:var(--rose);color:#fff;padding:7px 16px}
+  .veil{position:fixed;inset:0;z-index:200;display:grid;place-content:center;justify-items:center;gap:6px;color:#fff;
+    background:linear-gradient(135deg,#c94d77,#e8638c 45%,#f08fae)}
+  .veil span{font-size:3rem}.veil b{font-family:var(--hand);font-size:2.6rem}
+  .tour{position:fixed;inset:0;z-index:90;background:rgba(40,15,25,.55);display:grid;place-items:center;
+    padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+  .tourcard{background:var(--paper);border-radius:26px;padding:26px 22px 18px;width:min(380px,100%);display:grid;gap:12px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+  .tico{font-size:3rem;line-height:1}
+  .tourcard input{text-align:center;font-size:1.1rem}
+  .tourcard p{margin:0;color:var(--muted);line-height:1.55}
+  .tdots{display:flex;gap:6px;justify-content:center}
+  .tdots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+  .tdots i.on{background:var(--rose);width:22px;border-radius:999px}
+  .filters{display:flex;gap:8px;margin-top:8px}
+  .filters select{flex:1 1 0;min-width:0;padding:7px 12px;border-radius:999px;font-size:.86rem}
+  .linehit{background:var(--paper);border-radius:16px;padding:10px 14px;display:grid;gap:2px;text-align:left;font-weight:400;width:100%}
+  .linehit small{font-size:.72rem;font-weight:800;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+  .linehit span{font-family:var(--entry);font-size:1.05rem}
+  .room{text-align:left}
+  #roomAuth{text-align:center;margin-top:10vh}
+  textarea{width:100%;font:inherit;color:inherit;resize:vertical;border:2px solid var(--line);background:var(--paper);border-radius:14px;padding:10px 14px}
+  .rmtext{min-height:300px;font-family:var(--entry);font-size:var(--entry-size);line-height:32px;
+    background-image:repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px);background-attachment:local}
+  .heart{font-size:48px;color:var(--rose);animation:beat 1.6s infinite}
+  @keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.15)}30%{transform:scale(1)}}
+  .dots{display:flex;gap:12px;height:18px}
+  .dots span{width:14px;height:14px;border-radius:50%;border:2px solid var(--rose)}
+  .dots span.on{background:var(--rose)}
+  .pad{display:grid;grid-template-columns:repeat(3,72px);gap:12px}
+  .pad button{height:68px;font-size:1.4rem;background:var(--bg);box-shadow:0 2px 0 var(--line)}
+  .pad{grid-template-columns:repeat(3,68px)!important}
+  .hello{font-family:var(--hand);font-size:1.7rem;color:var(--muted);line-height:1.1}
+  .msg{min-height:1.5em;color:var(--danger);font-weight:600}
+
+  /* App shell */
+  header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .tabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px;scrollbar-width:none}
+  .tabs button{flex:0 0 auto}
+  .tabs button[aria-pressed="true"]{background:var(--rose);color:#fff}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none}
+  .chip{flex:0 0 auto;padding:6px 14px;font-size:.9rem;background:var(--paper);border:2px solid var(--line)}
+  .chip[aria-pressed="true"]{background:var(--rose-soft);border-color:var(--rose)}
+  .upcoming{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .upcoming span{background:var(--paper);border:2px dashed var(--h2);border-radius:999px;padding:5px 14px;font-size:.9rem;font-weight:600}
+
+  /* Page list */
+  .list{display:grid;gap:12px;margin-top:14px}
+  .entry{background:var(--paper);border-radius:18px;padding:16px 18px;border:2px solid transparent;text-align:left;width:100%;font-weight:400;display:grid;gap:4px;box-shadow:0 3px 14px rgba(232,99,140,.08)}
+  .entry:hover{border-color:var(--rose-soft);transform:none}
+  .entry .top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .entry .d{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .badges{display:flex;gap:6px;font-size:.8rem;font-weight:700}
+  .badge{background:var(--rose-soft);border-radius:999px;padding:0 8px}
+  .entry .t{font-family:var(--hand);font-size:1.6rem;color:var(--ink);line-height:1.1}
+  .entry .p{font-family:var(--entry);color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+  .empty{text-align:center;color:var(--muted);padding:36px 10px}
+  .empty b{font-family:var(--hand);font-size:1.8rem;color:var(--rose);display:block}
+
+  /* Calendar + heatmap */
+  .calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+  .grid .wd{font-size:.75rem;color:var(--muted);font-weight:700;text-transform:uppercase}
+  .day{aspect-ratio:1;border-radius:12px;padding:0;background:transparent;font-weight:600;position:relative;max-width:100%}
+  .day.has{background:var(--rose-soft)}
+  .day.has::after{content:"♥";position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:.6rem;color:var(--rose)}
+  .day.today{outline:2px solid var(--rose)}
+  .day.blank{visibility:hidden}
+  .heatwrap{overflow-x:auto;padding-bottom:6px}
+  .heat{display:grid;grid-template-rows:repeat(7,12px);grid-auto-flow:column;grid-auto-columns:12px;gap:3px;width:max-content}
+  .hc{width:12px;height:12px;border-radius:3px;padding:0;background:var(--line)}
+  .hc:hover{transform:scale(1.3)}
+  .hc.blank{visibility:hidden}
+  .l1{background:var(--h1)!important}.l2{background:var(--h2)!important}.l3{background:var(--h3)!important}.l4{background:var(--h4)!important}
+  .heatfoot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px;align-items:center}
+  .legend{display:flex;gap:3px;align-items:center;font-size:.8rem;color:var(--muted)}
+  .legend i{width:11px;height:11px;border-radius:3px;background:var(--line);display:inline-block}
+
+  /* Editor */
+  .editor{display:grid;gap:12px}
+  .titlein{font-family:var(--hand);font-size:1.8rem;padding:4px 14px}
+  .favbtn[aria-pressed="true"]{background:var(--rose-soft);box-shadow:inset 0 0 0 2px var(--rose)}
+  .toolbar select{width:auto;padding:5px 10px;border-radius:999px;font-size:.9rem}
+  .ink{color:transparent!important;text-shadow:0 0 7px var(--muted);background:linear-gradient(90deg,transparent,var(--rose-soft),transparent);border-radius:4px;cursor:grab;transition:color .6s,text-shadow .6s}
+  .ink.show{color:var(--ink)!important;text-shadow:none;background:var(--rose-soft)}
+  .banner{background:var(--paper);border:2px solid var(--rose-soft);border-radius:16px;padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+  .banner span{flex:1 1 200px}
+  .ol-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .ol-year{display:grid;gap:2px;padding:12px 14px;border-radius:16px;background:var(--bg)}
+  .ol-year.cur{background:var(--rose-soft)}
+  .ol-year .y{font-weight:700;font-size:.82rem;color:var(--muted);letter-spacing:.05em;font-variant-numeric:tabular-nums}
+  .ol-year .l{font-family:var(--entry);font-size:var(--entry-size);line-height:1.35;overflow-wrap:anywhere}
+  .wall{position:relative;border-radius:18px;margin-top:12px;background:#c79a6b;
+    background-image:radial-gradient(#b4875a 1px,transparent 1.5px),radial-gradient(#dcb487 1px,transparent 1.5px);
+    background-size:14px 14px,22px 22px;background-position:0 0,7px 9px;box-shadow:inset 0 0 0 8px #8a5a35;overflow:hidden;min-height:420px}
+  .pol{position:absolute;width:130px;background:#fff;padding:8px 8px 4px;box-shadow:0 6px 14px rgba(0,0,0,.3);touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+  .pol img{width:100%;aspect-ratio:1;object-fit:cover;display:block;pointer-events:none}
+  .pol .c{font-family:"Caveat",cursive;font-size:1.15rem;color:#4a2a36;text-align:center;line-height:1.3;min-height:1.3em;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .pol::before{content:"📌";position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:1.2rem}
+  .pol.drag{cursor:grabbing;box-shadow:0 14px 26px rgba(0,0,0,.4)}
+  .wall .empty{color:#fff}.wall .empty b{color:#fff}
+  .linkbtn{background:transparent;color:var(--muted);text-decoration:underline;padding:4px 8px;font-weight:600}
+  /* compact editor top */
+  .edtop{display:flex;gap:8px;align-items:center}
+  .edtop .pill{flex:1 1 0;min-width:0;width:auto;padding:7px 12px;border-radius:999px;font-size:.9rem;font-weight:700}
+  .edtop .favbtn{flex:0 0 40px;width:40px;height:40px;padding:0;font-size:1.25rem;background:var(--bg)}
+  .rate{display:flex!important;align-items:center;gap:10px;font-size:.9rem;color:var(--muted);font-weight:700}
+  .rate label{flex:0 0 auto}
+  .rate input{flex:1 1 auto;min-width:0;accent-color:var(--rose);padding:0;border:none;background:transparent}
+  .rate b{flex:0 0 58px;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+  .tbwrap{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);display:grid;gap:6px;padding:4px 0}
+  .tbrow{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;background:var(--bg);border-radius:16px;padding:5px}
+  .tbrow::-webkit-scrollbar{display:none}
+  .tbrow button{flex:1 1 0;min-width:30px;height:38px;padding:0 2px;background:transparent;border-radius:12px;font-size:1.05rem}
+  .tbrow button[aria-expanded="true"]{background:var(--rose-soft)}
+  .tbpanel{display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:var(--bg);border-radius:16px;padding:8px 10px}
+  .tbpanel .pl{font-size:.75rem;font-weight:800;color:var(--muted);letter-spacing:.04em}
+  .tbpanel select{width:auto;padding:5px 10px;border-radius:999px;font-size:.88rem}
+  .tbpanel .clr{padding:5px 12px;background:var(--paper)}
+  .tbpanel .sw{width:28px;height:28px;min-width:28px;padding:0;border:2px solid var(--paper);box-shadow:0 0 0 1px var(--line)}
+  .old-rate{display:grid;gap:6px}
+  .ratechips{display:flex;gap:6px;flex-wrap:wrap}
+  .ratechips button{width:38px;height:38px;padding:0;background:var(--paper);border:2px solid var(--line)}
+  .ratechips button[aria-pressed="true"]{background:var(--rose);border-color:var(--rose);color:#fff}
+  .toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:var(--bg);border-radius:16px;padding:6px}
+  .toolbar button{padding:6px 12px;background:var(--paper);min-width:38px}
+  .sw{width:28px;height:28px;min-width:28px!important;padding:0!important;border:2px solid var(--paper);box-shadow:0 0 0 1px var(--line)}
+  .sep{width:1px;height:24px;background:var(--line)}
+  .recording{background:var(--danger)!important;color:#fff}
+  .stkpal{display:flex;flex-wrap:wrap;gap:4px;background:var(--bg);border-radius:16px;padding:8px}
+  .stkpal button{font-size:1.5rem;padding:4px 8px;background:transparent}
+  .page{
+    min-height:320px;line-height:32px;font-family:var(--entry);font-size:var(--entry-size);
+    background-color:var(--paper);background-image:repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px);background-attachment:local;
+    padding:0 14px 8px;border:2px solid var(--line);border-radius:14px;outline:none;overflow-wrap:anywhere
+  }
+  .page:empty::before{content:attr(data-ph);color:var(--muted)}
+  .stk{font-size:1.2em;line-height:1}
+  .audiolist{display:grid;gap:8px}
+  .arow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg);border-radius:14px;padding:6px 10px}
+  .arow audio{flex:1 1 220px;min-width:0;height:36px}
+  .actions{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
+  .confirm{background:var(--rose-soft);border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+  /* Dates */
+  .cdgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .cd{background:var(--bg);border-radius:18px;padding:14px;display:grid;gap:2px;text-align:center;justify-items:center}
+  .cd .e{font-size:1.8rem}
+  .cd .n{font-family:var(--hand);font-size:2.6rem;color:var(--rose);line-height:1;font-variant-numeric:tabular-nums}
+  .cd.past{opacity:.55}
+  .cd b{word-break:break-word}
+  .drow{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;background:var(--bg);border-radius:16px;padding:10px 14px}
+  .drow .who{font-weight:700}
+  .soon{color:var(--rose);font-weight:700}
+  .form{background:var(--bg);border-radius:16px;padding:10px}
+  .form input,.form select{flex:1 1 150px;width:auto}
+  .check{display:flex;gap:6px;align-items:center;font-size:.9rem;color:var(--muted)}
+  .check input{width:auto}
+
+  /* Settings */
+  .settings section{display:grid;gap:10px}
+  .settings section + section{border-top:2px dashed var(--line);padding-top:18px}
+  .fonts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+  .fontopt{border-radius:16px;background:var(--bg);border:2px solid transparent;text-align:left;display:grid;gap:2px;font-weight:400}
+  .fontopt[aria-pressed="true"]{border-color:var(--rose);background:var(--rose-soft)}
+  .fontopt .s{font-size:1.35rem;line-height:1.2}
+  .fontopt .l{font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .nbrow{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--bg);border-radius:14px;padding:6px 6px 6px 14px}
+
+  /* Gallery */
+  .gal-add{display:grid;gap:10px;margin-bottom:8px}
+  .album{margin-top:22px}
+  .album-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
+  .thumb{padding:0;border-radius:14px;overflow:hidden;aspect-ratio:1;max-width:100%;background:var(--rose-soft);box-shadow:0 3px 12px rgba(232,99,140,.15)}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .lb{position:fixed;inset:0;z-index:50;background:rgba(40,15,25,.95);display:grid;grid-template-rows:1fr auto;color:#fff;
+      padding:calc(12px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+  .lb img{max-width:100%;max-height:100%;object-fit:contain;place-self:center;border-radius:10px;min-height:0}
+  .lb-stage{display:grid;min-height:0;position:relative}
+  .lb-close{position:absolute;top:0;right:0;color:#fff;font-size:1.3rem;z-index:2}
+  .lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);color:#fff;font-size:1.8rem;width:48px;height:48px;padding:0;z-index:2}
+  .lb-nav:hover{transform:translateY(-50%)}
+  .lb-prev{left:4px}.lb-next{right:4px}
+  .lb-foot{display:grid;gap:8px;justify-items:center;padding-top:12px;max-width:520px;width:100%;margin:0 auto;text-align:center}
+  .lb-album{font-family:var(--hand);font-size:1.7rem;color:var(--rose-soft)}
+  .lb-foot input{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff;text-align:center}
+  .lb-foot .sub{color:#e9c9d4}
+  .lb .danger{color:#ff9db6}
+  .lb .confirm{color:var(--ink)}
+
+  .toast{position:fixed;z-index:60;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:999px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90vw;text-align:center}
+  .toast.show{opacity:1}
+
+  /* Printed diary book */
+  #printArea{display:none}
+  @media print{
+    @page{margin:16mm}
+    body{background:#fff!important;background-image:none!important;padding:0!important;min-height:0}
+    body > *:not(#printArea){display:none!important}
+    #printArea{display:block;color:#3a2230;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .pcover{height:240mm;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;break-after:page;border:3px double #f5a3bd;border-radius:20px}
+    .pcover h1{font-size:72px}
+    .pheart{font-size:56px;color:#e8638c}
+    .psub{font-family:var(--hand);font-size:32px;color:#9a7280;margin:6px 0}
+    .phead{font-size:44px;margin-bottom:10px}
+    .pentry{padding-top:4mm}
+    .pentry.newpage{break-before:page}
+    .pentry + .pentry:not(.newpage){border-top:2px dashed #f6dde6;margin-top:8mm;padding-top:8mm}
+    .pmeta{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9a7280;font-weight:700}
+    .pentry h2{font-size:34px;margin:4px 0 8px}
+    .pbody{font-family:var(--entry);font-size:var(--entry-size);line-height:1.6;overflow-wrap:anywhere}
+    .pvoice{color:#9a7280;font-size:12px;margin-top:6mm}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- LOCK SCREEN -->
+  <div id="lock">
+    <div class="hello" id="lockGreet"></div>
+    <div class="book" id="book">
+      <button class="cover" id="coverBtn" aria-label="Open the diary">
+        <span class="ct"><span class="hrt">♥</span><b>My Diary</b><span id="coverName"></span></span>
+        <span class="strap" aria-hidden="true">🔒</span>
+      </button>
+      <div class="firstpage">
+    <div class="lockbox">
+      <div class="t">Dear diary,</div>
+      <div id="lockTitle" class="sub">Enter your PIN</div>
+      <div class="lenrow" id="pinLenRow" hidden>
+        <button data-len="6" aria-pressed="true">6 digit (safe)</button>
+        <button data-len="4" aria-pressed="false">4 digit</button>
+      </div>
+      <div class="dots" id="dots"><span></span><span></span><span></span><span></span></div>
+      <div class="msg" id="lockMsg"></div>
+      <div class="pad" id="pad"></div>
+      <div class="sub" id="lockHint"></div>
+      <button class="primary" id="bioBtn" hidden>👆 Unlock with fingerprint</button>
+      <button class="linkbtn" id="forgotBtn">Forgot PIN?</button>
+      <div id="forgotBox" class="stack" hidden style="width:100%">
+        <div class="sub" id="fqText"></div>
+        <input id="fqAns" type="password" placeholder="Your answer" autocomplete="off">
+        <button class="primary" id="fqGo">Reset PIN</button>
+        <button class="ghost" id="fqBack">Back to PIN</button>
+      </div>
+    </div>
+      </div>
+    </div>
+    <div class="tapnote" id="tapNote">👆 Tap karke kholo</div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="app" hidden>
+    <header>
+      <div>
+        <div class="hello" id="appGreet"></div>
+        <h1>My Diary</h1>
+        <div class="sub" id="greet"></div>
+      </div>
+      <button class="iconbtn" id="lockBtn" aria-label="Lock diary" title="Lock">🔒</button>
+    </header>
+
+    <nav class="nav" id="tabs" aria-label="Main">
+      <button data-tab="list" aria-pressed="true"><span>🏠</span><small>Home</small></button>
+      <button data-tab="cal" aria-pressed="false"><span>📅</span><small>Calendar</small></button>
+      <button class="fab" id="newBtn" aria-label="New page">＋</button>
+      <button data-tab="gallery" aria-pressed="false"><span>🖼️</span><small>Photos</small></button>
+      <button data-tab="settings" aria-pressed="false"><span>⚙️</span><small>More</small></button>
+    </nav>
+
+    <!-- Home -->
+    <div id="tab-list">
+      <div id="banners"></div>
+      <button class="today" id="todayCard">
+        <small>Aaj ka sawaal</small>
+        <b id="prompt"></b>
+        <span>✍️ Likhna shuru karo</span>
+      </button>
+      <div class="quick">
+        <button class="qtile" id="qLine"><small>📅 Roz ek line</small><b id="qLineTxt"></b></button>
+        <button class="qtile" id="qDates"><small>⏳ Dates</small><b id="qDatesTxt"></b></button>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="upcoming" id="upcoming" hidden></div>
+      <h3 class="sec">Recent pages</h3>
+      <div class="chips" id="nbChips"></div>
+      <input id="search" type="search" placeholder="Search pages aur lines…">
+      <div class="filters">
+        <select id="fMonth" aria-label="Month"><option value="">Saare mahine</option></select>
+        <select id="fRate" aria-label="Kind of day"><option value="">Har tarah ke din</option><option value="good">😊 Achhe din (8+)</option><option value="tough">😔 Mushkil din (1–4)</option></select>
+      </div>
+      <div class="list" id="lineHits"></div>
+      <div class="list" id="list"></div>
+    </div>
+
+    <!-- One line a day -->
+    <div id="tab-oneline" hidden>
+      <button class="ghost back" data-go="list">‹ Home</button>
+      <div class="card stack">
+        <div class="ol-head">
+          <button class="ghost" id="olPrev" aria-label="Previous day">‹</button>
+          <h2 id="olDate"></h2>
+          <button class="ghost" id="olNext" aria-label="Next day">›</button>
+        </div>
+        <div class="sub">One line a day. Every year, this date shows what you wrote on it before.</div>
+        <div class="row">
+          <input id="olInput" maxlength="200" placeholder="Today in one line…" style="flex:1 1 220px;width:auto">
+          <button class="primary" id="olSave">Save</button>
+        </div>
+        <div class="stack" id="olYears"></div>
+      </div>
+    </div>
+
+    <!-- Calendar -->
+    <div id="tab-cal" hidden>
+      <div class="card">
+        <div class="calhead">
+          <button class="ghost" id="prevY" aria-label="Previous year">‹</button>
+          <h2 id="heatLbl"></h2>
+          <button class="ghost" id="nextY" aria-label="Next year">›</button>
+        </div>
+        <div class="heatwrap"><div class="heat" id="heat"></div></div>
+        <div class="heatfoot">
+          <span class="sub" id="heatStats"></span>
+          <span class="legend">Less <i></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> More</span>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <div class="calhead">
+          <button class="ghost" id="prevM" aria-label="Previous month">‹</button>
+          <h2 id="monthLbl"></h2>
+          <button class="ghost" id="nextM" aria-label="Next month">›</button>
+        </div>
+        <div class="grid" id="calGrid"></div>
+      </div>
+      <div class="list" id="dayList"></div>
+    </div>
+
+    <!-- Photos -->
+    <div id="tab-gallery" hidden>
+      <div class="card gal-add">
+        <h2>Photo albums</h2>
+        <div class="row">
+          <input id="albumName" list="albumList" placeholder="Album name, e.g. Birthday 2024 or Goa trip" style="flex:1 1 220px;width:auto">
+          <datalist id="albumList"></datalist>
+          <button class="primary" id="addPhotosBtn">Add photos</button>
+          <input type="file" id="photoFile" accept="image/*" multiple hidden>
+        </div>
+        <div class="sub">Pick many photos at once. They are resized automatically so the diary stays light.</div>
+      </div>
+      <div class="chips" id="galView">
+        <button class="chip" data-view="albums" aria-pressed="true">Albums</button>
+        <button class="chip" data-view="wall" aria-pressed="false">📌 Polaroid wall</button>
+      </div>
+      <div id="albums"></div>
+      <div id="wall" class="wall" hidden></div>
+    </div>
+
+    <!-- Dates -->
+    <div id="tab-dates" hidden>
+      <button class="ghost back" data-go="list">‹ Home</button>
+      <div class="stack">
+        <div class="card stack">
+          <h2>Countdowns</h2>
+          <div class="row form">
+            <select id="cdEmoji" aria-label="Icon">
+              <option>🎉</option><option>✈️</option><option>📚</option><option>💍</option><option>🎂</option><option>🏖️</option><option>🎓</option><option>⭐</option>
+            </select>
+            <input id="cdTitle" placeholder="What are you waiting for? e.g. Goa trip" maxlength="60">
+            <input id="cdDate" type="date" aria-label="Date">
+            <button class="primary" id="cdAdd">Add</button>
+          </div>
+          <div class="cdgrid" id="cdList"></div>
+        </div>
+        <div class="card stack">
+          <h2>Important dates</h2>
+          <div class="row form">
+            <input id="idName" placeholder="Name, e.g. Mummy" maxlength="40">
+            <select id="idType" aria-label="Type"><option>Birthday</option><option>Anniversary</option><option>Other</option></select>
+            <input id="idDate" type="date" aria-label="Date">
+            <label class="check"><input type="checkbox" id="idYear" checked> Year is correct</label>
+            <button class="primary" id="idAdd">Add</button>
+          </div>
+          <div class="sub">Dates coming up in the next 2 weeks show on the Pages screen.</div>
+          <div class="stack" id="idList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- More / settings -->
+    <div id="tab-settings" hidden>
+      <div class="card settings">
+        <section>
+          <h2>Your name</h2>
+          <div class="row">
+            <input id="nameIn" placeholder="Your name" maxlength="30" style="max-width:260px">
+            <button id="nameSave">Save</button>
+          </div>
+        </section>
+        <section>
+          <h2>Look &amp; sound</h2>
+          <div class="row">
+            <select id="themeSel" aria-label="Theme">
+              <option value="auto">Day &amp; night (automatic)</option>
+              <option value="day">Always day</option>
+              <option value="night">Always night</option>
+            </select>
+            <label class="check"><input type="checkbox" id="musicChk"> Music box when opening</label>
+          </div>
+        </section>
+        <section>
+          <h2>Security</h2>
+          <div class="sub">Secret question, to reset the PIN if you ever forget it. <b id="secStatus"></b></div>
+          <div class="row">
+            <input id="secQ" placeholder="Question, e.g. My first school's name?" maxlength="80" style="flex:1 1 220px;width:auto">
+            <input id="secA" type="password" placeholder="Answer" maxlength="60" autocomplete="off" style="flex:1 1 150px;width:auto">
+            <button id="secSave">Save</button>
+          </div>
+          <div class="row" id="bioRow"></div>
+          <div class="sub">The diary locks itself after 5 minutes without use.</div>
+        </section>
+        <section>
+          <h2>App</h2>
+          <div class="row" id="installRow"></div>
+          <div class="row"><button id="tourBtn">✨ Tour dobara dekho</button></div>
+        </section>
+        <section>
+          <h2>Recently deleted</h2>
+          <div class="sub">Deleted pages stay here for 30 days.</div>
+          <div class="stack" id="trashList"></div>
+        </section>
+        <section>
+          <h2>Writing font</h2>
+          <div class="fonts" id="fonts"></div>
+        </section>
+        <section>
+          <h2>Notebooks</h2>
+          <div class="stack" id="nbList"></div>
+          <div class="row">
+            <input id="nbNew" placeholder="New notebook, e.g. College" maxlength="30" style="flex:1 1 200px;width:auto">
+            <button id="nbAdd">Add notebook</button>
+          </div>
+        </section>
+        <section>
+          <h2>Diary book (PDF)</h2>
+          <div class="sub">Makes a pretty book of your pages. In the print window choose “Save as PDF”, or print it.</div>
+          <div class="row">
+            <select id="bookMode" aria-label="Book type"><option value="year">Whole year</option><option value="day">One day</option></select>
+            <select id="bookYear" aria-label="Year"></select>
+            <input id="bookDay" type="date" aria-label="Day" hidden style="width:auto">
+            <select id="bookNb" aria-label="Notebook"></select>
+            <button class="primary" id="bookBtn">Make PDF</button>
+          </div>
+        </section>
+        <section>
+          <h2>Copy with photos</h2>
+          <div class="sub">Creates a new copy of this diary with every photo built in. Diary pages and PIN are not included. Photos in that copy are not locked, so share it carefully.</div>
+          <div class="row"><button id="giftBtn">Create copy with photos</button></div>
+        </section>
+        <section>
+          <h2>Backup 🔐</h2>
+          <div class="sub">Everything lives only on this phone. The backup file is locked with a password you choose, so nobody can open it without that password. Keep the password safe, it cannot be recovered.</div>
+          <div class="row">
+            <input id="bkPw" type="password" placeholder="Backup password" autocomplete="new-password" style="flex:1 1 150px;width:auto">
+            <input id="bkPw2" type="password" placeholder="Same password again" autocomplete="new-password" style="flex:1 1 150px;width:auto">
+          </div>
+          <div class="row">
+            <button class="primary" id="exportBtn">Download locked backup</button>
+            <button id="importBtn">Restore from backup</button>
+            <input type="file" id="importFile" accept=".json,application/json" hidden>
+          </div>
+          <div class="row form" id="rsBox" hidden>
+            <span class="sub" style="flex:1 1 100%">Yeh backup locked hai. Uska password daalo:</span>
+            <input id="rsPw" type="password" placeholder="Backup password" autocomplete="off" style="flex:1 1 160px;width:auto">
+            <button class="primary" id="rsGo">Restore</button>
+          </div>
+        </section>
+        <section>
+          <h2>Storage</h2>
+          <div class="sub" id="storeInfo" style="white-space:pre-line">Checking…</div>
+        </section>
+        <section>
+          <h2>Change PIN</h2>
+          <div class="row">
+            <input id="newPin" type="password" inputmode="numeric" maxlength="6" placeholder="New 4 or 6-digit PIN" autocomplete="off" style="max-width:220px">
+            <button id="savePin">Save PIN</button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Editor -->
+    <div id="editor" class="card editor" hidden>
+      <div class="edtop">
+        <select id="edNb" class="pill" aria-label="Notebook"></select>
+        <input id="edDate" type="date" class="pill" aria-label="Date">
+        <button id="edFav" class="favbtn" aria-pressed="false" aria-label="Favourite">☆</button>
+      </div>
+      <input id="edTitle" class="titlein" placeholder="Title for today…" maxlength="120">
+      <div class="rate">
+        <label for="edRateIn">Din kaisa tha?</label>
+        <input type="range" id="edRateIn" min="0" max="10" step="1" value="0">
+        <b id="edRateVal">–</b>
+      </div>
+      <div class="tbwrap" id="toolbar">
+        <div class="tbrow">
+          <button data-cmd="bold" aria-label="Bold"><b>B</b></button>
+          <button data-cmd="italic" aria-label="Italic"><i>I</i></button>
+          <button data-cmd="underline" aria-label="Underline"><u>U</u></button>
+          <button id="colBtn" aria-label="Colours and highlighter">🎨</button>
+          <button id="stkBtn" aria-label="Stickers">🌸</button>
+          <button id="inkBtn" aria-label="Secret ink">🪄</button>
+          <button id="recBtn" aria-label="Record voice note">🎙️</button>
+          <button id="speakBtn" aria-label="Speak to type">🗣️</button>
+          <button id="moreBtn" aria-label="More options">⋯</button>
+        </div>
+        <div class="tbpanel" id="colPal" hidden>
+          <span class="pl">Text</span>
+          <button class="sw" data-color="#4a2a36" style="background:#4a2a36" aria-label="Dark text"></button>
+          <button class="sw" data-color="#e8638c" style="background:#e8638c" aria-label="Pink text"></button>
+          <button class="sw" data-color="#8b5cf6" style="background:#8b5cf6" aria-label="Purple text"></button>
+          <button class="sw" data-color="#2f9e7a" style="background:#2f9e7a" aria-label="Green text"></button>
+          <button class="sw" data-color="#3b82c4" style="background:#3b82c4" aria-label="Blue text"></button>
+          <span class="pl">Highlight</span>
+          <button class="sw" data-hl="#fff3a3" style="background:#fff3a3" aria-label="Yellow highlight"></button>
+          <button class="sw" data-hl="#ffd1e0" style="background:#ffd1e0" aria-label="Pink highlight"></button>
+          <button class="sw" data-hl="#c9f2d9" style="background:#c9f2d9" aria-label="Green highlight"></button>
+          <button data-cmd="removeFormat" class="clr">Clear</button>
+        </div>
+        <div class="stkpal" id="stkPal" hidden></div>
+        <div class="tbpanel" id="morePal" hidden>
+          <label class="pl" for="speakLang">🗣️ Bolne ki bhasha</label>
+          <select id="speakLang"><option value="hi-IN">हिंदी</option><option value="en-IN">English</option></select>
+          <label class="pl" for="ambSel">🎧 Sound</label>
+          <select id="ambSel">
+            <option value="">Off</option><option value="rain">🌧️ Rain</option><option value="ocean">🌊 Ocean</option><option value="cafe">☕ Café</option>
+          </select>
+        </div>
+      </div>
+      <div id="edBody" class="page" contenteditable="true" data-ph="Dear diary…" role="textbox" aria-multiline="true" aria-label="Diary page"></div>
+      <div class="audiolist" id="edAudioList"></div>
+      <div id="leaveConfirm" class="confirm" hidden>
+        <span>Leave without saving?</span>
+        <button class="primary" id="leaveYes">Discard changes</button>
+        <button id="leaveNo">Keep writing</button>
+      </div>
+      <div id="delConfirm" class="confirm" hidden>
+        <span>Move this page to Recently deleted?</span>
+        <button class="primary" id="delYes">Yes, delete</button>
+        <button id="delNo">Keep it</button>
+      </div>
+      <div class="actions">
+        <button class="danger" id="delBtn">Delete</button>
+        <div class="row">
+          <button class="ghost" id="cancelBtn">Back</button>
+          <button id="pdfDayBtn">Save &amp; PDF</button>
+          <button class="primary" id="saveBtn">Save page</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div class="snack" id="snack" hidden role="status"><span id="snackTxt"></span><button id="snackBtn">Undo</button></div>
+
+<!-- covers the screen when the phone switches apps or while locking -->
+<div class="veil" id="veil" hidden><span>♥</span><b>My Diary</b></div>
+
+<!-- first-run tour -->
+<div class="tour" id="tour" hidden role="dialog" aria-modal="true" aria-label="Welcome tour">
+  <div class="tourcard">
+    <div class="tico" id="tIco"></div>
+    <h2 id="tTitle"></h2>
+    <p id="tText"></p>
+    <input id="tName" maxlength="30" placeholder="Apna naam likho" autocomplete="given-name" hidden>
+    <div class="tdots" id="tDots"></div>
+    <div class="row" style="justify-content:space-between">
+      <button class="ghost" id="tSkip">Skip</button>
+      <button class="primary" id="tNext">Aage ›</button>
+    </div>
+  </div>
+</div>
+
+<!-- hidden room: opens only by tapping the ♥ on the cover three times -->
+<div class="wrap room" id="room" hidden>
+  <div class="card stack" id="roomAuth">
+    <div class="tico">🚪</div>
+    <h2>Secret room</h2>
+    <div class="sub" id="rmSub"></div>
+    <input id="rmPin" type="password" inputmode="numeric" maxlength="8" placeholder="Secret PIN" autocomplete="off">
+    <input id="rmPin2" type="password" inputmode="numeric" maxlength="8" placeholder="Same PIN again" autocomplete="off" hidden>
+    <div class="msg" id="rmMsg"></div>
+    <button class="primary" id="rmGo">Andar chalo</button>
+    <button class="ghost" id="rmBack">‹ Wapas diary pe</button>
+  </div>
+  <div id="roomMain" hidden>
+    <header>
+      <div><div class="hello">Sirf tumhare liye 🤫</div><h1>Secret room</h1></div>
+      <button class="iconbtn" id="rmLock" aria-label="Leave secret room">🔒</button>
+    </header>
+    <button class="today" id="rmNew"><small>Raaz ki baat</small><b>Kuch likhna hai jo kisi ko nahi batana?</b><span>✍️ Naya secret page</span></button>
+    <div class="list" id="rmList"></div>
+    <div class="card editor" id="rmEd" hidden>
+      <input id="rmTitle" class="titlein" placeholder="Title…" maxlength="120">
+      <textarea id="rmText" class="rmtext" placeholder="Yahan jo likhogi, woh sirf is room ke PIN se khulega…"></textarea>
+      <div id="rmDelConfirm" class="confirm" hidden>
+        <span>Yeh secret page hamesha ke liye delete karna hai?</span>
+        <button class="primary" id="rmDelYes">Haan, delete</button>
+        <button id="rmDelNo">Nahi</button>
+      </div>
+      <div class="actions">
+        <button class="danger" id="rmDel">Delete</button>
+        <div class="row"><button class="ghost" id="rmCancel">Back</button><button class="primary" id="rmSave">Save</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="lb" class="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <div class="lb-stage" id="lbStage">
+    <button class="lb-close ghost" id="lbClose" aria-label="Close">✕</button>
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous photo">‹</button>
+    <img id="lbImg" alt="">
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Next photo">›</button>
+  </div>
+  <div class="lb-foot">
+    <div id="lbAlbum" class="lb-album"></div>
+    <input id="lbCaption" placeholder="Add a caption…" maxlength="140">
+    <div id="lbCapRO"></div>
+    <div class="row" style="justify-content:center">
+      <span id="lbCount" class="sub"></span>
+      <button class="danger" id="lbDel">Delete photo</button>
+    </div>
+    <div id="lbDelConfirm" class="confirm" hidden>
+      <span>Delete this photo?</span>
+      <button class="primary" id="lbDelYes">Yes, delete</button>
+      <button id="lbDelNo">Keep it</button>
+    </div>
+  </div>
+</div>
+
+<div id="printArea"></div>
+
+<script id="giftData" type="application/json">{"photos":[]}</script>
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  // Snapshot of this file, taken before anything changes, used to build the copy with photos
+  const SRC='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  let GIFT={photos:[]};try{GIFT=JSON.parse($('giftData').textContent)||GIFT}catch(e){}
+  const TABS=['list','oneline','cal','gallery','dates','settings'];
+  const K={entries:'myDiary.entries.v1',pin:'myDiary.pin.v1',settings:'myDiary.settings.v1',cd:'myDiary.countdowns.v1',dates:'myDiary.dates.v1',
+    lines:'myDiary.lines.v1',trash:'myDiary.trash.v1',draft:'myDiary.draft.v1',wall:'myDiary.wall.v1',sec:'myDiary.secret.v1',bio:'myDiary.bio.v1',
+    vault:'myDiary.vault.v2',guard:'myDiary.guard.v1',room:'myDiary.room.v1'};
+  const DAY=864e5;
+
+  // ================= ENCRYPTION =================
+  // One random data key (AES-256-GCM) locks everything. That key is itself locked by the PIN
+  // (PBKDF2-SHA256, 310k rounds), and optionally by the secret answer and by the fingerprint (WebAuthn PRF).
+  // Nothing readable is stored: pages, lines, dates, drafts, deleted pages, photos and voice notes are all ciphertext.
+  const ITER=310000;
+  const HAS_CRYPTO=!!(window.crypto&&crypto.subtle&&window.isSecureContext!==false);
+  const te=new TextEncoder(),tdc=new TextDecoder();
+  const rand=n=>crypto.getRandomValues(new Uint8Array(n));
+  function b64e(u8){u8=u8 instanceof Uint8Array?u8:new Uint8Array(u8);let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)}
+  function b64d(s){const bin=atob(s),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u}
+  let dek=null;
+  async function kekFrom(secret,salt,iter){
+    const base=await crypto.subtle.importKey('raw',te.encode(secret),'PBKDF2',false,['deriveKey']);
+    return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['wrapKey','unwrapKey','encrypt','decrypt']);
+  }
+  async function wrapWith(kek,key){const iv=rand(12);const w=await crypto.subtle.wrapKey('raw',key,kek,{name:'AES-GCM',iv});return{iv:b64e(iv),w:b64e(new Uint8Array(w))}}
+  async function unwrapWith(kek,o){return crypto.subtle.unwrapKey('raw',b64d(o.w),kek,{name:'AES-GCM',iv:b64d(o.iv)},{name:'AES-GCM'},true,['encrypt','decrypt'])}
+  async function lockKey(secret,key){const salt=rand(16),kek=await kekFrom(secret,salt,ITER);return Object.assign({salt:b64e(salt),iter:ITER},await wrapWith(kek,key))}
+  async function openKey(secret,o){return unwrapWith(await kekFrom(secret,b64d(o.salt),o.iter||ITER),o)}
+  const newKey=()=>crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt','decrypt']);
+  async function encB(bytes,key){const iv=rand(12);return{iv,ct:new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key||dek,bytes))}}
+  async function decB(iv,ct,key){return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv},key||dek,ct))}
+  async function encJ(obj,key){const {iv,ct}=await encB(te.encode(JSON.stringify(obj)),key);return{$e:[b64e(iv),b64e(ct)]}}
+  async function decJ(o,key){return JSON.parse(tdc.decode(await decB(b64d(o.$e[0]),b64d(o.$e[1]),key)))}
+
+  function rawLoad(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}}
+  function rawSave(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){toast('Could not save. Phone storage is full.');return false}}
+  let vault=rawLoad(K.vault,null);
+  const saveVault=()=>rawSave(K.vault,vault);
+
+  // sensitive keys live decrypted in memory only while unlocked, and are written back encrypted
+  const SENS=new Set([K.entries,K.cd,K.dates,K.lines,K.trash,K.draft]);
+  const cache={},DEL={};let pend={},wq=Promise.resolve(),sched=false;
+  function load(k,f){if(SENS.has(k))return k in cache?cache[k]:f;return rawLoad(k,f)}
+  function save(k,v){
+    if(!SENS.has(k))return rawSave(k,v);
+    if(!dek)return false;
+    cache[k]=v;pend[k]=v;schedule();return true;
+  }
+  function removeKey(k){if(SENS.has(k)){delete cache[k];pend[k]=DEL;schedule()}else{try{localStorage.removeItem(k)}catch(e){}}}
+  function schedule(){
+    if(sched)return;sched=true;
+    wq=wq.then(async()=>{
+      sched=false;const p=pend;pend={};
+      for(const k of Object.keys(p)){
+        try{if(p[k]===DEL)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(await encJ(p[k])))}
+        catch(e){toast('Could not save. Phone storage is full.')}
+      }
+    });
+  }
+  const flush=()=>wq.then(()=>Object.keys(pend).length?(schedule(),wq):null);
+
+  // decrypt everything into memory after the PIN is right; old unlocked data gets locked here too
+  async function openData(){
+    for(const k of SENS){
+      let o=null;try{const raw=localStorage.getItem(k);o=raw==null?null:JSON.parse(raw)}catch(e){o=null}
+      if(o==null)continue;
+      if(o&&o.$e){try{cache[k]=await decJ(o)}catch(e){console.warn('could not open',k)}}
+      else{cache[k]=o;save(k,o)}
+    }
+    for(const s of ['photos','audio']){
+      let rs=[];try{rs=await rawIdb.all(s)||[]}catch(e){}
+      for(const r of rs)if(r&&r.v!==2){try{await idb.put(s,r)}catch(e){}}
+    }
+    await flush();
+  }
+  const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  const pad2=n=>String(n).padStart(2,'0');
+  const isoDay=d=>d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+  const todayISO=()=>isoDay(new Date());
+  const parseISO=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+  const today0=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+  const dayDiff=(a,b)=>Math.round((a-b)/864e5);
+  function niceDate(iso,opt){return parseISO(iso).toLocaleDateString(undefined,opt||{weekday:'short',day:'numeric',month:'long',year:'numeric'})}
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const plural=(n,w)=>n+' '+w+(n===1?'':'s');
+  const fmtDur=s=>Math.floor(s/60)+':'+pad2(s%60);
+  function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2400)}
+  function hash(s){let h=5381;for(const c of 'diary♥'+s)h=((h<<5)+h+c.charCodeAt(0))>>>0;return h.toString(36)}
+  function download(content,name,type){
+    const a=document.createElement('a');a.href=URL.createObjectURL(content instanceof Blob?content:new Blob([content],{type}));a.download=name;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+  }
+  const blobToData=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(b)});
+
+  // Only keep safe formatting from the editor
+  const OK_TAGS=new Set(['B','STRONG','I','EM','U','SPAN','FONT','BR','DIV','P']);
+  function clean(html){
+    const t=document.createElement('template');t.innerHTML=html||'';
+    (function walk(n){
+      [...n.childNodes].forEach(c=>{
+        if(c.nodeType===3)return;
+        if(c.nodeType!==1){c.remove();return}
+        walk(c);
+        if(!OK_TAGS.has(c.tagName)){c.replaceWith(...c.childNodes);return}
+        const st=c.style,color=st.color||(c.tagName==='FONT'?c.getAttribute('color'):''),bg=st.backgroundColor,stk=c.classList.contains('stk'),ink=c.classList.contains('ink');
+        const fw=/^(bold|[6-9]00)$/.test(st.fontWeight)?'bold':'',fs=st.fontStyle==='italic'?'italic':'',td=/underline/.test(st.textDecoration||st.textDecorationLine)?'underline':'';
+        [...c.attributes].forEach(a=>c.removeAttribute(a.name));
+        if(color)c.style.color=color;
+        if(bg)c.style.backgroundColor=bg;
+        if(fw)c.style.fontWeight=fw;
+        if(fs)c.style.fontStyle=fs;
+        if(td)c.style.textDecoration=td;
+        if(stk)c.className='stk';
+        else if(ink)c.className='ink';
+      });
+    })(t.content);
+    return t.innerHTML;
+  }
+  function plain(html){
+    const t=document.createElement('template');
+    t.innerHTML=(html||'').replace(/<br\s*\/?>/gi,'\n').replace(/<\/(div|p)>/gi,'\n');
+    t.content.querySelectorAll('.ink').forEach(x=>{x.textContent='🪄'});
+    return t.content.textContent.replace(/ /g,' ').replace(/\n{3,}/g,'\n\n').trim();
+  }
+  const countWords=t=>(t.trim().match(/\S+/g)||[]).length;
+
+  // ---------- storage ----------
+  const rawIdb=(()=>{
+    let p;
+    function db(){return p||(p=new Promise((res,rej)=>{
+      const r=indexedDB.open('myDiary',2);
+      r.onupgradeneeded=()=>{const d=r.result;['photos','audio'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'})})};
+      r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);
+    }))}
+    async function tx(store,mode,fn){const d=await db();return new Promise((res,rej)=>{const t=d.transaction(store,mode);const req=fn(t.objectStore(store));t.oncomplete=()=>res(req&&req.result);t.onerror=()=>rej(t.error)})}
+    return{all:s=>tx(s,'readonly',o=>o.getAll()),get:(s,id)=>tx(s,'readonly',o=>o.get(id)),put:(s,v)=>tx(s,'readwrite',o=>o.put(v)),del:(s,id)=>tx(s,'readwrite',o=>o.delete(id))};
+  })();
+  // photos and voice notes are encrypted before they touch the phone's storage
+  const pcache=new Map();
+  async function encRec(s,v){
+    if(s==='photos'){const {iv,ct}=await encB(te.encode(JSON.stringify({album:v.album,caption:v.caption,data:v.data,added:v.added})));return{id:v.id,v:2,iv,ct}}
+    const {iv,ct}=await encB(new Uint8Array(await v.blob.arrayBuffer()));return{id:v.id,v:2,iv,ct,type:v.blob.type||'audio/webm',dur:v.dur};
+  }
+  async function decRec(s,r){
+    if(!r||r.v!==2)return r;
+    if(s==='photos'&&pcache.has(r.id))return pcache.get(r.id);
+    try{
+      const p=await decB(r.iv,r.ct);
+      if(s==='photos'){const o=Object.assign({id:r.id},JSON.parse(tdc.decode(p)));pcache.set(r.id,o);return o}
+      return{id:r.id,blob:new Blob([p],{type:r.type}),dur:r.dur};
+    }catch(e){return null}
+  }
+  const idb={
+    async all(s){if(!dek)return[];const out=[];for(const r of (await rawIdb.all(s)||[])){const d=await decRec(s,r);if(d)out.push(d)}return out},
+    async get(s,id){if(!dek)return null;return decRec(s,await rawIdb.get(s,id))},
+    async put(s,v){if(!dek)throw new Error('locked');if(s==='photos')pcache.delete(v.id);return rawIdb.put(s,await encRec(s,v))},
+    del(s,id){pcache.delete(id);return rawIdb.del(s,id)}
+  };
+
+  let settings=Object.assign({font:'cute',name:'',notebooks:[],theme:'auto',music:true,lastBackup:0,since:0,backupSnooze:0},load(K.settings,{}));
+  if(!settings.since){settings.since=Date.now();save(K.settings,settings)}
+  if(!Array.isArray(settings.notebooks)||!settings.notebooks.length)settings.notebooks=[{id:'nb-personal',name:'Personal'}];
+  const saveSettings=()=>save(K.settings,settings);
+  const nbName=id=>(settings.notebooks.find(n=>n.id===id)||settings.notebooks[0]).name;
+
+  function migrate(e){
+    if(e.html==null)e.html=esc(e.text||'').replace(/\n/g,'<br>');
+    e.html=clean(e.html);e.text=plain(e.html);
+    if(!e.notebook||!settings.notebooks.some(n=>n.id===e.notebook))e.notebook=settings.notebooks[0].id;
+    e.rating=Math.max(0,Math.min(10,+e.rating||0));e.fav=!!e.fav;
+    if(!Array.isArray(e.audio))e.audio=[];
+    e.title=String(e.title||'');e.created=e.created||Date.now();e.updated=e.updated||Date.now();
+    return e;
+  }
+  let entries=[],countdowns=[],impDates=[],lines={},trash=[],wallPos=rawLoad(K.wall,{});
+  const persist=()=>save(K.entries,entries);
+  function loadState(){
+    entries=load(K.entries,[]).map(migrate);
+    countdowns=load(K.cd,[]);impDates=load(K.dates,[]);lines=load(K.lines,{});trash=load(K.trash,[]);
+    const cut=Date.now()-30*DAY,keep=[];
+    trash.forEach(t=>{if(t.deletedAt<cut)(t.entry.audio||[]).forEach(a=>idb.del('audio',a.id).catch(()=>{}));else keep.push(t)});
+    if(keep.length!==trash.length){trash=keep;save(K.trash,trash)}
+  }
+
+  // ---------- sound: music box + background sounds (made in the browser, no files) ----------
+  let actx=null;
+  function ac(){
+    if(!actx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{actx=new C()}catch(e){return null}}
+    if(actx.state==='suspended')actx.resume().catch(()=>{});
+    return actx;
+  }
+  function tone(a,dest,f,t,vol,len,type){
+    const o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.value=f;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+len);
+    o.connect(g);g.connect(dest);o.start(t);o.stop(t+len+0.05);
+  }
+  function musicBox(){
+    if(!settings.music)return;const a=ac();if(!a)return;
+    const notes=[76,79,84,83,79,81,79,76,74,76,72,79],t0=a.currentTime+0.08;
+    notes.forEach((n,i)=>{const f=440*Math.pow(2,(n-69)/12),t=t0+i*0.21;tone(a,a.destination,f,t,0.11,1.3);tone(a,a.destination,f*2.003,t,0.025,0.6)});
+  }
+  let amb=null;
+  function noise(a,brown){
+    const len=a.sampleRate*4,b=a.createBuffer(1,len,a.sampleRate),d=b.getChannelData(0);let last=0;
+    for(let i=0;i<len;i++){const w=Math.random()*2-1;if(brown){last=(last+0.02*w)/1.02;d[i]=last*3.5}else d[i]=w}
+    const s=a.createBufferSource();s.buffer=b;s.loop=true;return s;
+  }
+  function chain(a,src,type,freq,q,vol,out){
+    const f=a.createBiquadFilter();f.type=type;f.frequency.value=freq;if(q)f.Q.value=q;
+    const g=a.createGain();g.gain.value=vol;src.connect(f);f.connect(g);g.connect(out);src.start();return g;
+  }
+  function startAmb(kind){
+    stopAmb();if(!kind)return;const a=ac();if(!a){toast('Sounds are not supported in this browser');return}
+    const out=a.createGain();out.gain.setValueAtTime(0,a.currentTime);out.gain.linearRampToValueAtTime(1,a.currentTime+1.5);out.connect(a.destination);
+    const srcs=[],lfos=[];let timer=null;
+    const lfo=(target,rate,depth)=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=rate;g.gain.value=depth;o.connect(g);g.connect(target);o.start();lfos.push(o)};
+    if(kind==='rain'){
+      const s=noise(a,false);srcs.push(s);chain(a,s,'lowpass',1800,0,0.12,out);
+      timer=setInterval(()=>{if(Math.random()<0.6)tone(a,out,1500+Math.random()*2500,a.currentTime,0.02,0.05)},110);
+    }else if(kind==='ocean'){
+      const s=noise(a,true);srcs.push(s);const g=chain(a,s,'lowpass',700,0,0.25,out);lfo(g.gain,0.09,0.2);
+    }else{
+      const s=noise(a,true);srcs.push(s);const g=chain(a,s,'bandpass',420,0.6,0.35,out);lfo(g.gain,0.3,0.1);
+      const s2=noise(a,false);srcs.push(s2);chain(a,s2,'bandpass',1000,1,0.03,out);
+      timer=setInterval(()=>{if(Math.random()<0.35){const f=2200+Math.random()*800;tone(a,out,f,a.currentTime,0.015,0.4);tone(a,out,f*2.7,a.currentTime,0.008,0.3)}},900);
+    }
+    amb={out,srcs,lfos,timer};
+  }
+  function stopAmb(){
+    if(!amb||!actx)return;const {out,srcs,lfos,timer}=amb;amb=null;clearInterval(timer);
+    try{out.gain.cancelScheduledValues(actx.currentTime);out.gain.setValueAtTime(out.gain.value,actx.currentTime);out.gain.linearRampToValueAtTime(0,actx.currentTime+0.5)}catch(e){}
+    setTimeout(()=>{srcs.concat(lfos).forEach(n=>{try{n.stop()}catch(e){}});try{out.disconnect()}catch(e){}},600);
+    $('ambSel').value='';
+  }
+  $('ambSel').onchange=()=>startAmb($('ambSel').value);
+
+  // ---------- day / night ----------
+  function applyTime(){
+    const h=new Date().getHours(),night=settings.theme==='night'||(settings.theme!=='day'&&(h>=19||h<6));
+    document.documentElement.dataset.time=night?'night':'day';
+    const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=night?'#1d1630':'#e8638c';
+  }
+  const sorted=list=>list.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.updated-a.updated);
+
+  // ---------- fonts ----------
+  const FONTS={
+    cute:{name:'Cute',fam:'"Patrick Hand","Comic Sans MS",cursive',size:'21px'},
+    hand:{name:'Handwriting',fam:'"Caveat","Segoe Script",cursive',size:'25px'},
+    desi:{name:'Hindi handwriting',fam:'"Kalam",cursive',size:'19px'},
+    simple:{name:'Simple',fam:'"Nunito",system-ui,sans-serif',size:'17px'}
+  };
+  function applyFont(){const f=FONTS[settings.font]||FONTS.cute;document.documentElement.style.setProperty('--entry',f.fam);document.documentElement.style.setProperty('--entry-size',f.size)}
+
+  // ---------- lock ----------
+  const legacyPin=rawLoad(K.pin,null);
+  let pinBuf='',mode=(vault||legacyPin)?'enter':'create',firstPin='',newLen=6,recoverDek=null,busy=false,firstTime=false;
+  const pinLen=()=>mode==='enter'?(vault?vault.len:4):newLen;
+  function setupLock(){
+    ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(k=>{
+      const b=document.createElement('button');b.textContent=k;if(!k)b.style.visibility='hidden';
+      if(k==='⌫')b.setAttribute('aria-label','Delete digit');
+      b.onclick=()=>press(k);$('pad').appendChild(b);
+    });
+    document.querySelectorAll('#pinLenRow [data-len]').forEach(b=>b.onclick=()=>{newLen=+b.dataset.len;pinBuf='';refreshLock()});
+    if(!HAS_CRYPTO){
+      $('pad').hidden=true;$('dots').hidden=true;$('forgotBtn').hidden=true;
+      $('lockTitle').textContent='Is browser me diary safe tareeke se nahi khul sakti.';
+      $('lockMsg').textContent='Isko diary ke website link se Chrome ya Safari me kholo.';
+      return;
+    }
+    refreshLock();
+  }
+  function refreshLock(){
+    if(!HAS_CRYPTO)return;
+    const n=pinLen();
+    $('lockTitle').textContent=busy?'Diary khul rahi hai… 🔐':mode==='enter'?'Enter your PIN':mode==='create'?'Create a '+n+'-digit PIN':'Enter the PIN again';
+    $('lockHint').textContent=mode==='enter'?'':mode==='create'?'6 digit sabse safe hai. Is PIN ke bina diary koi nahi padh sakta.':'';
+    $('pinLenRow').hidden=mode!=='create';
+    document.querySelectorAll('#pinLenRow [data-len]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.len===newLen));
+    const D=$('dots');if(D.children.length!==n){D.innerHTML='';for(let i=0;i<n;i++)D.appendChild(document.createElement('span'))}
+    [...D.children].forEach((s,i)=>s.classList.toggle('on',i<pinBuf.length));
+    $('forgotBtn').hidden=mode!=='enter'||!$('forgotBox').hidden;
+    paintBio();
+  }
+  // too many wrong tries → growing wait (30s, 1m, 2m … up to 15m)
+  function gget(n){return(rawLoad(K.guard,{})[n])||{f:0,u:0}}
+  function gset(n,v){const g=rawLoad(K.guard,{});g[n]=v;rawSave(K.guard,g)}
+  function gwait(n){return Math.max(0,Math.ceil((gget(n).u-Date.now())/1000))}
+  function gfail(n){const x=gget(n);x.f++;if(x.f>=5)x.u=Date.now()+Math.min(30e3*Math.pow(2,x.f-5),15*60e3);gset(n,x);return x}
+  function gok(n){gset(n,{f:0,u:0})}
+  const waitText=s=>'Bahut galat try ho gaye. '+(s>=60?Math.ceil(s/60)+' min':s+' sec')+' baad try karo.';
+  setInterval(()=>{if(!$('lock').hidden&&mode==='enter'){const w=gwait('pin');if(w)$('lockMsg').textContent=waitText(w)}},1000);
+
+  // forgot PIN → the secret answer can open the data key, then a new PIN is set
+  const norm=s=>s.trim().toLowerCase().replace(/\s+/g,' ');
+  function showForgot(on){
+    $('forgotBox').hidden=!on;$('pad').hidden=on;$('dots').hidden=on;$('lockTitle').hidden=on;
+    $('fqAns').value='';refreshLock();if(on)$('fqAns').focus();
+  }
+  const legacySec=rawLoad(K.sec,null);
+  const recQ=()=>vault&&vault.rec?vault.rec.q:(!vault&&legacySec?legacySec.q:null);
+  $('forgotBtn').onclick=()=>{
+    const q=recQ();
+    if(!q){$('lockMsg').textContent='Secret question set nahi tha, isliye PIN reset nahi ho sakta.';return}
+    $('fqText').textContent=q;showForgot(true);
+  };
+  $('fqBack').onclick=()=>showForgot(false);
+  $('fqGo').onclick=async()=>{
+    const w=gwait('pin');if(w){$('lockMsg').textContent=waitText(w);return}
+    const a=norm($('fqAns').value);if(!a)return;
+    $('fqGo').disabled=true;$('fqGo').textContent='Check ho raha hai…';
+    let ok=false;
+    try{
+      if(vault&&vault.rec){recoverDek=await openKey(a,vault.rec);ok=true}
+      else if(!vault&&legacySec&&hash(a)===legacySec.a){recoverDek=null;ok=true}
+    }catch(e){ok=false}
+    $('fqGo').disabled=false;$('fqGo').textContent='Reset PIN';
+    if(ok){gok('pin');showForgot(false);mode='create';pinBuf='';refreshLock();toast('Sahi jawab! Ab naya PIN banao.')}
+    else{const x=gfail('pin');$('lockMsg').textContent=x.u>Date.now()?waitText(gwait('pin')):'Yeh jawab sahi nahi hai'}
+  };
+  $('fqAns').onkeydown=e=>{if(e.key==='Enter')$('fqGo').click()};
+
+  // fingerprint / face unlock: the phone's fingerprint gives a secret (WebAuthn PRF) that also opens the data key
+  let bioOK=false;
+  const b64=buf=>b64e(new Uint8Array(buf)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  const unb64=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return b64d(s)};
+  (async()=>{
+    try{
+      const secure=window.isSecureContext&&(location.protocol==='https:'||location.hostname==='localhost');
+      bioOK=!!(HAS_CRYPTO&&secure&&window.PublicKeyCredential&&await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());
+    }catch(e){bioOK=false}
+    paintBio();
+  })();
+  function paintBio(){$('bioBtn').hidden=!(bioOK&&vault&&vault.bio&&mode==='enter'&&$('forgotBox').hidden&&!busy)}
+  const prfKey=out=>crypto.subtle.importKey('raw',new Uint8Array(out),{name:'AES-GCM'},false,['wrapKey','unwrapKey']);
+  async function prfGet(id,salt){
+    const a=await navigator.credentials.get({publicKey:{challenge:rand(32),allowCredentials:[{type:'public-key',id,transports:['internal']}],userVerification:'required',timeout:60000,extensions:{prf:{eval:{first:salt}}}}});
+    const r=a.getClientExtensionResults();return r&&r.prf&&r.prf.results&&r.prf.results.first;
+  }
+  async function bioSetup(){
+    try{
+      const salt=rand(32);
+      const c=await navigator.credentials.create({publicKey:{challenge:rand(32),rp:{name:'My Diary'},user:{id:rand(16),name:'diary',displayName:settings.name||'My Diary'},
+        pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+        authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required',residentKey:'preferred'},timeout:60000,attestation:'none',
+        extensions:{prf:{eval:{first:salt}}}}});
+      const ext=c.getClientExtensionResults();
+      if(!ext||!ext.prf||ext.prf.enabled===false){toast('Is phone pe fingerprint se diary lock nahi ho sakti. PIN use karo.');return}
+      let out=ext.prf.results&&ext.prf.results.first;
+      if(!out)out=await prfGet(new Uint8Array(c.rawId),salt);
+      if(!out){toast('Is phone pe fingerprint se diary lock nahi ho sakti. PIN use karo.');return}
+      vault.bio=Object.assign({id:b64(c.rawId),salt:b64e(salt)},await wrapWith(await prfKey(out),dek));saveVault();
+      toast('Fingerprint unlock on hai 👆');renderSettings();
+    }catch(e){toast('Fingerprint setup cancel ho gaya')}
+  }
+  $('bioBtn').onclick=async()=>{
+    if(settings.music)ac();
+    if(!vault||!vault.bio)return;
+    try{
+      const out=await prfGet(unb64(vault.bio.id),b64d(vault.bio.salt));
+      if(!out)throw 0;
+      busy=true;refreshLock();
+      dek=await unwrapWith(await prfKey(out),vault.bio);
+      await afterUnlock();
+    }catch(e){busy=false;refreshLock();$('lockMsg').textContent='Fingerprint kaam nahi kiya. PIN use karo.'}
+  };
+
+  function press(k){
+    if(busy||!HAS_CRYPTO)return;
+    if(settings.music)ac();
+    if(mode==='enter'){const w=gwait('pin');if(w){$('lockMsg').textContent=waitText(w);return}}
+    $('lockMsg').textContent='';
+    const n=pinLen();
+    if(k==='⌫')pinBuf=pinBuf.slice(0,-1);else if(pinBuf.length<n)pinBuf+=k;
+    refreshLock();if(pinBuf.length===n)setTimeout(submitPin,120);
+  }
+  async function submitPin(){
+    const pin=pinBuf;pinBuf='';
+    if(mode==='enter'){
+      busy=true;refreshLock();
+      let ok=false;
+      try{
+        if(vault){dek=await openKey(pin,vault.pin);ok=true}
+        else if(legacyPin&&hash(pin)===legacyPin){await makeVault(pin,null);ok=true}
+      }catch(e){ok=false;dek=null}
+      if(ok){gok('pin');await afterUnlock();return}
+      busy=false;const x=gfail('pin');
+      $('lockMsg').textContent=x.u>Date.now()?waitText(gwait('pin')):'Galat PIN'+(x.f>=3?' ('+(5-x.f)+' try baaki)':'')+', dobara try karo';
+      if(navigator.vibrate)try{navigator.vibrate([60,40,60])}catch(e){}
+    }
+    else if(mode==='create'){firstPin=pin;mode='confirm'}
+    else if(pin===firstPin){
+      busy=true;refreshLock();
+      try{
+        if(recoverDek){dek=recoverDek;recoverDek=null;vault.pin=await lockKey(pin,dek);vault.len=pin.length;saveVault();toast('Naya PIN set ho gaya ♥')}
+        else{firstTime=!vault&&!legacyPin;await makeVault(pin,vault);toast('PIN set ♥')}
+        await afterUnlock();return;
+      }catch(e){busy=false;$('lockMsg').textContent='PIN set nahi ho paya. Dobara try karo.';mode='create'}
+    }
+    else{$('lockMsg').textContent='Dono PIN match nahi hue. Phir se banao.';mode='create'}
+    refreshLock();
+  }
+  // a brand-new data key (or the old diary's data, locked for the first time)
+  async function makeVault(pin,old){
+    dek=await newKey();
+    vault={v:2,len:pin.length,pin:await lockKey(pin,dek),rec:null,bio:null};
+    saveVault();
+  }
+  async function afterUnlock(){
+    try{await openData()}catch(e){console.warn(e)}
+    ['pin','sec','bio'].forEach(k=>{try{localStorage.removeItem(K[k])}catch(e){}});
+    loadState();
+    busy=false;mode='enter';
+    try{if(navigator.storage&&navigator.storage.persist&&!(await navigator.storage.persisted()))await navigator.storage.persist()}catch(e){}
+    unlock();
+    if(firstTime&&!settings.tourDone)setTimeout(showTour,500);
+  }
+  function hello(){
+    const h=new Date().getHours();
+    const g=h>=5&&h<12?'Good morning':h>=12&&h<17?'Good afternoon':h>=17&&h<21?'Good evening':'Good night';
+    const icon=h>=5&&h<12?' ☀️':h>=12&&h<17?' 🌤️':h>=17&&h<21?' 🌆':' 🌙';
+    return g+(settings.name?', '+settings.name:'')+icon;
+  }
+  function paintHello(){$('lockGreet').textContent=hello();$('appGreet').textContent=hello();$('coverName').textContent=settings.name||'';applyTime()}
+  setInterval(paintHello,60000);
+  // the cover opens like a real diary, then the PIN page shows
+  function openCover(){
+    if($('book').classList.contains('open'))return;
+    $('book').classList.add('open');musicBox();
+  }
+  // ♥ on the cover tapped 3 times quickly opens the hidden room; a normal tap opens the diary
+  let hTaps=0,hTimer=null;
+  $('coverBtn').onclick=e=>{
+    if(e.target.closest('.hrt')){
+      hTaps++;clearTimeout(hTimer);
+      if(hTaps>=3){hTaps=0;openRoom();return}
+      hTimer=setTimeout(()=>{hTaps=0;openCover()},650);return;
+    }
+    openCover();
+  };
+  function unlock(){$('lock').hidden=true;$('app').hidden=false;mode='enter';lastAct=Date.now();showTab('list')}
+  const isOpen=()=>!$('app').hidden||!$('room').hidden;
+  // locking saves what is open, then reloads, so nothing readable is left in memory or on screen
+  let locking=false;
+  async function lockNow(){
+    if(locking)return;locking=true;
+    try{closeLb();stopAmb();stopSpeak();if(!$('editor').hidden){await saveDraft();stopRec()}}catch(e){}
+    $('veil').hidden=false;
+    try{await flush()}catch(e){}
+    location.reload();
+  }
+  $('lockBtn').onclick=()=>{if(rec){toast('Stop the recording first');return}lockNow()};
+  // auto-lock after 5 minutes without use
+  let lastAct=Date.now(),hiddenAt=0;
+  ['pointerdown','keydown','input','touchstart','scroll'].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now()},{passive:true,capture:true}));
+  setInterval(()=>{if(isOpen()&&!rec&&Date.now()-lastAct>5*60e3)lockNow()},15000);
+  // hide the screen when the phone switches apps, so the diary never shows in the app switcher
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden){hiddenAt=Date.now();if(isOpen())$('veil').hidden=false;saveDraft()}
+    else{
+      if(hiddenAt&&Date.now()-hiddenAt>5*60e3&&isOpen()&&!rec){lockNow();return}
+      if(!locking)$('veil').hidden=true;
+    }
+  });
+  window.addEventListener('pagehide',()=>{if(isOpen())$('veil').hidden=false});
+  document.addEventListener('keydown',e=>{
+    if(!$('lb').hidden){
+      if(e.key==='Escape')closeLb();
+      if(e.target.tagName!=='INPUT'){if(e.key==='ArrowLeft')$('lbPrev').click();if(e.key==='ArrowRight')$('lbNext').click()}
+      return;
+    }
+    if(!$('lock').hidden&&e.target.tagName!=='INPUT'){
+      if(!$('book').classList.contains('open')){if(e.key==='Enter'||/^\d$/.test(e.key))openCover();return}
+      if(/^\d$/.test(e.key))press(e.key);else if(e.key==='Backspace')press('⌫');
+    }
+  });
+
+  // ---------- tabs ----------
+  let curTab='list';
+  function showTab(t){
+    if(curTab!==t)window.scrollTo(0,0);
+    curTab=t;
+    const navT=(t==='oneline'||t==='dates')?'list':t;
+    document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab===navT));
+    TABS.forEach(x=>$('tab-'+x).hidden=x!==t);
+    paintHello();
+    $('greet').textContent=plural(entries.length,'page')+' written';
+    ({list:renderList,oneline:renderOneline,cal:renderCal,gallery:renderGallery,dates:renderDates,settings:renderSettings})[t]();
+  }
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+
+  // ---------- pages list ----------
+  let nbFilter='all';
+  function entryBtn(e){
+    const b=document.createElement('button');b.className='entry';
+    const top=document.createElement('div');top.className='top';
+    const d=document.createElement('div');d.className='d';d.textContent=niceDate(e.date)+' · '+nbName(e.notebook);
+    const bd=document.createElement('div');bd.className='badges';
+    if(e.fav){const s=document.createElement('span');s.textContent='⭐';bd.appendChild(s)}
+    if(e.audio.length){const s=document.createElement('span');s.textContent='🎙️';bd.appendChild(s)}
+    if(e.rating){const s=document.createElement('span');s.className='badge';s.textContent=e.rating+'/10';bd.appendChild(s)}
+    top.append(d,bd);
+    const t=document.createElement('div');t.className='t';t.textContent=e.title||'Untitled page';
+    const p=document.createElement('div');p.className='p';p.textContent=e.text||(e.audio.length?'Voice note':'');
+    b.append(top,t,p);b.onclick=()=>openEditor(e.id);return b;
+  }
+  function renderChips(){
+    const C=$('nbChips');C.innerHTML='';
+    [['all','All'],['fav','⭐ Favourites'],...settings.notebooks.map(n=>[n.id,n.name])].forEach(([id,name])=>{
+      const b=document.createElement('button');b.className='chip';b.textContent=name;b.setAttribute('aria-pressed',nbFilter===id);
+      b.onclick=()=>{nbFilter=id;renderList()};C.appendChild(b);
+    });
+  }
+  function renderUpcoming(){
+    const U=$('upcoming');U.innerHTML='';const items=[];
+    impDates.forEach(d=>{const n=nextOcc(d.date),k=dayDiff(n,today0());if(k<=14)items.push([k,dateLabel(d)+' '+whenText(k)])});
+    countdowns.forEach(c=>{const k=dayDiff(parseISO(c.date),today0());if(k>=0&&k<=7)items.push([k,c.emoji+' '+c.title+' '+whenText(k)])});
+    items.sort((a,b)=>a[0]-b[0]).forEach(([,t])=>{const s=document.createElement('span');s.textContent=t;U.appendChild(s)});
+    U.hidden=!items.length;
+  }
+  function banner(text,buttons){
+    const b=document.createElement('div');b.className='banner';
+    const s=document.createElement('span');s.textContent=text;b.appendChild(s);
+    const r=document.createElement('div');r.className='row';
+    buttons.forEach(([label,cls,fn])=>{const x=document.createElement('button');x.textContent=label;if(cls)x.className=cls;x.onclick=fn;r.appendChild(x)});
+    b.appendChild(r);$('banners').appendChild(b);
+  }
+  function renderBanners(){
+    $('banners').innerHTML='';
+    const d=load(K.draft,null);
+    if(d&&(d.title||plain(d.html||'')||(d.audio||[]).length))
+      banner('📝 You have an unsaved page from '+new Date(d.at).toLocaleString(undefined,{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})+'.',[
+        ['Continue writing','primary',()=>openDraft(d)],
+        ['Discard','ghost',()=>{(d.pending||[]).forEach(id=>idb.del('audio',id).catch(()=>{}));clearDraft();renderBanners()}]]);
+    if(vault&&!vault.rec)
+      banner('🔐 Set a secret question, so you can reset your PIN if you forget it.',[['Set it now','primary',()=>{showTab('settings');setTimeout(()=>$('secQ').focus(),50)}]]);
+    const since=Math.max(settings.lastBackup||0,settings.since||0),days=Math.floor((Date.now()-since)/DAY);
+    if(entries.length&&days>=14&&Date.now()-(settings.backupSnooze||0)>3*DAY)
+      banner('💾 It has been '+days+' days since your last backup.',[
+        ['Back up now','primary',()=>$('exportBtn').click()],
+        ['Later','ghost',()=>{settings.backupSnooze=Date.now();saveSettings();renderBanners()}]]);
+  }
+  // ---------- home cards ----------
+  const PROMPTS=['Aaj kis baat pe muskurayi?','Aaj ka sabse achha pal kaunsa tha?','Aaj kisne tumhara din banaya?','Aaj kya naya seekha?',
+    'Aaj kis cheez ke liye shukriya kehna chahogi?','Aaj ka din ek gaane me batao 🎵','Aaj kya khaya jo yaad rahega? 😋','Aaj kis baat ne pareshan kiya?',
+    'Kal ke liye ek chhota sa goal?','Aaj khud ki kaunsi baat achhi lagi?','Aaj kisi ko miss kiya?','Agar aaj dobara jee sakti to kya badalti?',
+    'Aaj ka mood ek rang me batao 🎨','Aaj kis baat pe zor se hasi aayi? 😂','Aaj kaunsi chhoti si jeet mili?','Is hafte kya karne ka mann hai?',
+    'Aaj kaunsi baat dil me reh gayi?','Aaj ki ek photo jaisi yaad likho 📷','Abhi is waqt kaisa feel ho raha hai?','Aaj apne aap ko kya advice dogi?'];
+  function todayPrompt(){const d=new Date(),start=new Date(d.getFullYear(),0,1);return PROMPTS[(dayDiff(today0(),start)+d.getFullYear())%PROMPTS.length]}
+  function streak(){
+    const has=new Set(entries.map(e=>e.date));
+    Object.entries(lines).forEach(([md,ys])=>Object.entries(ys||{}).forEach(([y,v])=>{if(v)has.add(y+'-'+md)}));
+    let d=today0();if(!has.has(isoDay(d)))d=new Date(d.getFullYear(),d.getMonth(),d.getDate()-1);
+    let n=0;while(has.has(isoDay(d))){n++;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()-1)}
+    return n;
+  }
+  function renderHome(){
+    $('prompt').textContent=todayPrompt();
+    const t=todayISO(),ln=(lines[t.slice(5)]||{})[t.slice(0,4)];
+    $('qLineTxt').textContent=ln?'“'+ln+'”':'Aaj ki line likho ✍️';
+    const nextCd=countdowns.map(c=>({c,k:dayDiff(parseISO(c.date),today0())})).filter(x=>x.k>=0).sort((a,b)=>a.k-b.k)[0];
+    const nextD=impDates.map(d=>({d,k:dayDiff(nextOcc(d.date),today0())})).sort((a,b)=>a.k-b.k)[0];
+    $('qDatesTxt').textContent=nextCd&&(!nextD||nextCd.k<=nextD.k)?nextCd.c.emoji+' '+nextCd.c.title+' · '+(nextCd.k===0?'aaj!':nextCd.k+' din')
+      :nextD?dateLabel(nextD.d)+' · '+(nextD.k===0?'aaj!':nextD.k+' din'):'Countdown ya birthday add karo';
+    const S=$('stats');S.innerHTML='';
+    const st=streak(),fav=entries.filter(e=>e.fav).length;
+    [st?'🔥 '+plural(st,'din')+' streak':'🔥 Aaj se streak shuru karo','📖 '+plural(entries.length,'page'),fav?'⭐ '+fav+' favourite':''].filter(Boolean).forEach(x=>{
+      const s=document.createElement('span');s.textContent=x.replace(/ dins /,' din ').replace(/dins/,'din');S.appendChild(s);
+    });
+  }
+  $('todayCard').onclick=()=>{const p=todayPrompt();openEditor(null);$('edBody').dataset.ph=p+' …';$('edBody').focus()};
+  $('qLine').onclick=()=>{olDate=todayISO();showTab('oneline');setTimeout(()=>$('olInput').focus(),50)};
+  $('qDates').onclick=()=>showTab('dates');
+  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showTab(b.dataset.go));
+
+  function renderList(){
+    renderHome();renderChips();renderUpcoming();renderBanners();
+    const q=$('search').value.trim().toLowerCase(),fm=$('fMonth').value,fr=$('fRate').value;
+    // month list from the pages that exist
+    const months=[...new Set(entries.map(e=>e.date.slice(0,7)))].sort().reverse(),M=$('fMonth');
+    M.innerHTML='<option value="">Saare mahine</option>';
+    months.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=parseISO(m+'-01').toLocaleDateString(undefined,{month:'long',year:'numeric'});M.appendChild(o)});
+    M.value=months.includes(fm)?fm:'';
+    const items=sorted(entries).filter(e=>(nbFilter==='all'||(nbFilter==='fav'?e.fav:e.notebook===nbFilter))
+      &&(!q||(e.title+' '+e.text).toLowerCase().includes(q))
+      &&(!M.value||e.date.startsWith(M.value))
+      &&(!fr||(fr==='good'?e.rating>=8:e.rating>0&&e.rating<=4)));
+    // matching one-line-a-day lines
+    const H=$('lineHits');H.innerHTML='';
+    if(q){
+      const hits=[];
+      Object.entries(lines).forEach(([md,ys])=>Object.entries(ys||{}).forEach(([y,v])=>{if(v&&v.toLowerCase().includes(q)&&(!M.value||(y+'-'+md).startsWith(M.value)))hits.push([y+'-'+md,v])}));
+      hits.sort((a,b)=>b[0].localeCompare(a[0])).slice(0,8).forEach(([d,v])=>{
+        const b=document.createElement('button');b.className='linehit';
+        const s=document.createElement('small');s.textContent='📅 Roz ek line · '+niceDate(d,{day:'numeric',month:'short',year:'numeric'});
+        const t=document.createElement('span');t.textContent=v;b.append(s,t);
+        b.onclick=()=>{olDate=d;showTab('oneline')};H.appendChild(b);
+      });
+    }
+    const L=$('list');L.innerHTML='';
+    if(!items.length){
+      if(H.children.length)return;
+      L.innerHTML=(q||M.value||fr)?'<div class="empty"><b>Kuch nahi mila</b>Koi aur word ya filter try karo.</div>'
+        :nbFilter==='fav'?'<div class="empty"><b>No favourites yet</b>Open a page and tap ☆.</div>'
+        :'<div class="empty"><b>Your first page is waiting</b>Tap ＋ and write about today.</div>';
+      return;
+    }
+    items.forEach(e=>L.appendChild(entryBtn(e)));
+  }
+  $('search').oninput=renderList;
+  $('fMonth').onchange=renderList;$('fRate').onchange=renderList;
+
+  // ---------- calendar + heatmap ----------
+  let calY=new Date().getFullYear(),calM=new Date().getMonth(),selDay=null,heatY=new Date().getFullYear();
+  function renderCal(){renderHeat();renderMonth()}
+  function renderHeat(){
+    $('heatLbl').textContent=heatY;
+    const W={},yearEntries=entries.filter(e=>e.date.startsWith(heatY+'-'));
+    yearEntries.forEach(e=>{W[e.date]=(W[e.date]||0)+Math.max(1,countWords(e.text)+(e.audio.length?20:0))});
+    const H=$('heat');H.innerHTML='';
+    const off=(new Date(heatY,0,1).getDay()+6)%7, days=dayDiff(new Date(heatY+1,0,1),new Date(heatY,0,1));
+    for(let i=0;i<off;i++){const s=document.createElement('span');s.className='hc blank';H.appendChild(s)}
+    for(let i=0;i<days;i++){
+      const d=new Date(heatY,0,1+i),iso=isoDay(d),w=W[iso]||0,lv=!w?0:w<50?1:w<150?2:w<300?3:4;
+      const b=document.createElement('button');b.className='hc'+(lv?' l'+lv:'');
+      b.title=niceDate(iso)+(w?' · '+plural(w,'word'):'');b.setAttribute('aria-label',b.title);
+      b.onclick=()=>{calY=d.getFullYear();calM=d.getMonth();selDay=iso;renderMonth();$('dayList').scrollIntoView({behavior:'smooth',block:'start'})};
+      H.appendChild(b);
+    }
+    const rated=yearEntries.filter(e=>e.rating);
+    $('heatStats').textContent=plural(yearEntries.length,'page')+' · '+plural(Object.keys(W).length,'day')+' written'+(rated.length?' · average day '+(rated.reduce((s,e)=>s+e.rating,0)/rated.length).toFixed(1)+'/10':'');
+  }
+  $('prevY').onclick=()=>{heatY--;renderHeat()};
+  $('nextY').onclick=()=>{heatY++;renderHeat()};
+  function renderMonth(){
+    $('monthLbl').textContent=new Date(calY,calM,1).toLocaleDateString(undefined,{month:'long',year:'numeric'});
+    const G=$('calGrid');G.innerHTML='';
+    ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(w=>{const s=document.createElement('div');s.className='wd';s.textContent=w;G.appendChild(s)});
+    const first=(new Date(calY,calM,1).getDay()+6)%7,days=new Date(calY,calM+1,0).getDate();
+    const has=new Set(entries.map(e=>e.date)),today=todayISO();
+    for(let i=0;i<first;i++){const b=document.createElement('div');b.className='day blank';G.appendChild(b)}
+    for(let d=1;d<=days;d++){
+      const iso=calY+'-'+pad2(calM+1)+'-'+pad2(d);
+      const b=document.createElement('button');b.className='day'+(has.has(iso)?' has':'')+(iso===today?' today':'');
+      b.textContent=d;b.onclick=()=>{selDay=iso;renderDay()};G.appendChild(b);
+    }
+    renderDay();
+  }
+  function renderDay(){
+    const L=$('dayList');L.innerHTML='';if(!selDay)return;
+    const h=document.createElement('h2');h.textContent=niceDate(selDay);h.style.fontSize='1.6rem';L.appendChild(h);
+    sorted(entries).filter(e=>e.date===selDay).forEach(e=>L.appendChild(entryBtn(e)));
+    const nb=document.createElement('button');nb.className='primary';nb.textContent='+ Write for this day';nb.style.justifySelf='start';
+    nb.onclick=()=>openEditor(null,selDay);L.appendChild(nb);
+  }
+  $('prevM').onclick=()=>{calM--;if(calM<0){calM=11;calY--}selDay=null;renderMonth()};
+  $('nextM').onclick=()=>{calM++;if(calM>11){calM=0;calY++}selDay=null;renderMonth()};
+
+  // ---------- one line a day (5-year diary) ----------
+  let olDate=todayISO();
+  function renderOneline(){
+    const d=parseISO(olDate),md=olDate.slice(5),y=olDate.slice(0,4),byYear=lines[md]||{};
+    $('olDate').textContent=d.toLocaleDateString(undefined,{day:'numeric',month:'long'})+(y!==String(new Date().getFullYear())?' '+y:'');
+    $('olInput').value=byYear[y]||'';
+    $('olInput').placeholder=(olDate===todayISO()?'Today':'This day in '+y)+' in one line…';
+    const Y=$('olYears');Y.innerHTML='';
+    const ys=Object.keys(byYear).filter(k=>byYear[k]).sort().reverse();
+    if(!ys.length){Y.innerHTML='<div class="sub">Nothing written on this date yet. Next year, this line will be waiting here.</div>';return}
+    ys.forEach(k=>{
+      const r=document.createElement('div');r.className='ol-year'+(k===y?' cur':'');
+      const a=document.createElement('div');a.className='y';a.textContent=k+(k===y?' · this one':'');
+      const b=document.createElement('div');b.className='l';b.textContent=byYear[k];
+      r.append(a,b);Y.appendChild(r);
+    });
+  }
+  function moveOl(n){const d=parseISO(olDate);olDate=isoDay(new Date(d.getFullYear(),d.getMonth(),d.getDate()+n));renderOneline()}
+  $('olPrev').onclick=()=>moveOl(-1);
+  $('olNext').onclick=()=>moveOl(1);
+  $('olSave').onclick=()=>{
+    const md=olDate.slice(5),y=olDate.slice(0,4),v=$('olInput').value.trim();
+    lines[md]=lines[md]||{};if(v)lines[md][y]=v;else delete lines[md][y];
+    save(K.lines,lines);toast(v?'Line saved ♥':'Line removed');renderOneline();
+  };
+  $('olInput').onkeydown=e=>{if(e.key==='Enter')$('olSave').click()};
+
+  // ---------- dates: countdowns + important dates ----------
+  function nextOcc(iso){const d=parseISO(iso),t=today0();let n=new Date(t.getFullYear(),d.getMonth(),d.getDate());if(n<t)n=new Date(t.getFullYear()+1,d.getMonth(),d.getDate());return n}
+  const TYPE_ICON={Birthday:'🎂',Anniversary:'💐',Other:'📌'};
+  function dateLabel(d){return (TYPE_ICON[d.type]||'📌')+' '+(d.type==='Other'?d.name:d.name+"'s "+d.type.toLowerCase())}
+  function whenText(k){return k===0?'today 🎉':k===1?'tomorrow':'in '+k+' days'}
+  function removeBtn(onYes){
+    const w=document.createElement('span'),x=document.createElement('button');x.className='ghost';x.textContent='Remove';
+    x.onclick=()=>{
+      w.innerHTML='';
+      const y=document.createElement('button');y.className='danger';y.textContent='Yes, remove';y.onclick=onYes;
+      const n=document.createElement('button');n.className='ghost';n.textContent='No';n.onclick=()=>{w.innerHTML='';w.appendChild(x)};
+      w.append(y,n);
+    };
+    w.appendChild(x);return w;
+  }
+  function renderDates(){
+    const C=$('cdList');C.innerHTML='';
+    if(!countdowns.length)C.innerHTML='<div class="sub">No countdowns yet. Add an exam, a trip or a wedding.</div>';
+    countdowns.slice().sort((a,b)=>{const ka=dayDiff(parseISO(a.date),today0()),kb=dayDiff(parseISO(b.date),today0());return (ka<0)-(kb<0)||(ka<0?kb-ka:ka-kb)}).forEach(c=>{
+      const k=dayDiff(parseISO(c.date),today0());
+      const el=document.createElement('div');el.className='cd'+(k<0?' past':'');
+      const e=document.createElement('div');e.className='e';e.textContent=c.emoji;
+      const n=document.createElement('div');n.className='n';n.textContent=k===0?'Today!':Math.abs(k);
+      const s=document.createElement('div');s.className='sub';s.textContent=k===0?'🎉':k>0?(k===1?'day to go':'days to go'):(k===-1?'day ago':'days ago');
+      const t=document.createElement('b');t.textContent=c.title;
+      const dd=document.createElement('div');dd.className='sub';dd.textContent=niceDate(c.date,{day:'numeric',month:'short',year:'numeric'});
+      el.append(e,n,s,t,dd,removeBtn(()=>{countdowns=countdowns.filter(x=>x.id!==c.id);save(K.cd,countdowns);renderDates()}));
+      C.appendChild(el);
+    });
+    const L=$('idList');L.innerHTML='';
+    if(!impDates.length)L.innerHTML='<div class="sub">No dates yet. Add birthdays of friends and family.</div>';
+    impDates.map(d=>({d,n:nextOcc(d.date)})).sort((a,b)=>a.n-b.n).forEach(({d,n})=>{
+      const k=dayDiff(n,today0());
+      const row=document.createElement('div');row.className='drow';
+      const left=document.createElement('div');
+      const who=document.createElement('div');who.className='who';who.textContent=dateLabel(d);
+      const info=document.createElement('div');info.className='sub';
+      const age=d.hasYear?n.getFullYear()-parseISO(d.date).getFullYear():0;
+      info.textContent=niceDate(d.date,{day:'numeric',month:'long'})+(age>0?(d.type==='Birthday'?' · turns '+age:' · '+plural(age,'year')):'');
+      const when=document.createElement('span');when.className=k<=14?'soon':'sub';when.textContent=' · '+whenText(k);info.appendChild(when);
+      left.append(who,info);
+      row.append(left,removeBtn(()=>{impDates=impDates.filter(x=>x.id!==d.id);save(K.dates,impDates);renderDates()}));
+      L.appendChild(row);
+    });
+  }
+  $('cdAdd').onclick=()=>{
+    const title=$('cdTitle').value.trim(),date=$('cdDate').value;
+    if(!title||!date){toast('Add a name and a date');return}
+    countdowns.push({id:uid(),title,date,emoji:$('cdEmoji').value});save(K.cd,countdowns);
+    $('cdTitle').value='';$('cdDate').value='';toast('Countdown added');renderDates();
+  };
+  $('idAdd').onclick=()=>{
+    const name=$('idName').value.trim(),date=$('idDate').value;
+    if(!name||!date){toast('Add a name and a date');return}
+    impDates.push({id:uid(),name,date,type:$('idType').value,hasYear:$('idYear').checked});save(K.dates,impDates);
+    $('idName').value='';$('idDate').value='';toast('Date added');renderDates();
+  };
+
+  // ---------- settings ----------
+  $('nameSave').onclick=()=>{settings.name=$('nameIn').value.trim();saveSettings();paintHello();toast('Name saved')};
+  $('themeSel').onchange=()=>{settings.theme=$('themeSel').value;saveSettings();applyTime()};
+  $('musicChk').onchange=()=>{settings.music=$('musicChk').checked;saveSettings();if(settings.music)musicBox()};
+  $('secSave').onclick=()=>{
+    const q=$('secQ').value.trim(),a=norm($('secA').value);
+    if(!q||!a){toast('Write both a question and an answer');return}
+    $('secSave').disabled=true;
+    lockKey(a,dek).then(o=>{vault.rec=Object.assign({q},o);saveVault();$('secA').value='';toast('Secret question saved 🔐');renderSettings()})
+      .catch(()=>toast('Save nahi hua, dobara try karo')).finally(()=>{$('secSave').disabled=false});
+  };
+  let installEvt=null;
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(curTab==='settings')renderSettings()});
+  function renderInstall(){
+    const R=$('installRow');R.innerHTML='';
+    const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+    const s=document.createElement('span');s.className='sub';
+    if(standalone){s.textContent='Installed on this phone ✓';R.appendChild(s);return}
+    if(installEvt){
+      const b=document.createElement('button');b.className='primary';b.textContent='📲 Install app';
+      b.onclick=async()=>{installEvt.prompt();try{await installEvt.userChoice}catch(e){}installEvt=null;renderInstall()};R.appendChild(b);return;
+    }
+    s.textContent=location.protocol==='https:'
+      ?'To install: on iPhone tap Share, then “Add to Home Screen”. On Android open the browser menu (⋮), then “Install app” or “Add to Home screen”.'
+      :'The diary can be installed like an app when it is opened from its website link.';
+    R.appendChild(s);
+  }
+  function renderTrash(){
+    const T=$('trashList');T.innerHTML='';
+    if(!trash.length){T.innerHTML='<div class="sub">Nothing here.</div>';return}
+    trash.slice().sort((a,b)=>b.deletedAt-a.deletedAt).forEach(t=>{
+      const row=document.createElement('div');row.className='drow';
+      const left=document.createElement('div');
+      const w=document.createElement('div');w.className='who';w.textContent=t.entry.title||'Untitled page';
+      const i=document.createElement('div');i.className='sub';
+      const left30=30-Math.floor((Date.now()-t.deletedAt)/DAY);
+      i.textContent=niceDate(t.entry.date)+' · gone forever in '+plural(Math.max(1,left30),'day');
+      left.append(w,i);
+      const r=document.createElement('div');r.className='row';
+      const rs=document.createElement('button');rs.className='primary';rs.textContent='Restore';
+      rs.onclick=()=>{trash=trash.filter(x=>x!==t);save(K.trash,trash);entries.push(migrate(t.entry));persist();toast('Page restored');renderSettings()};
+      r.append(rs,removeBtn(()=>{(t.entry.audio||[]).forEach(a=>idb.del('audio',a.id).catch(()=>{}));trash=trash.filter(x=>x!==t);save(K.trash,trash);renderSettings()}));
+      row.append(left,r);T.appendChild(row);
+    });
+  }
+  function renderSettings(){
+    $('nameIn').value=settings.name||'';
+    $('themeSel').value=settings.theme||'auto';$('musicChk').checked=!!settings.music;
+    const sec=vault&&vault.rec;$('secStatus').textContent=sec?'✓ Set':'Not set yet';
+    if(sec&&!$('secQ').value)$('secQ').value=sec.q;
+    const BR=$('bioRow');BR.innerHTML='';
+    if(bioOK){
+      const on=!!(vault&&vault.bio),b=document.createElement('button');
+      b.textContent=on?'Turn off fingerprint unlock':'👆 Turn on fingerprint / face unlock';if(!on)b.className='primary';
+      b.onclick=()=>{if(on){vault.bio=null;saveVault();toast('Fingerprint unlock is off');renderSettings()}else bioSetup()};
+      BR.appendChild(b);
+    }else{const s=document.createElement('span');s.className='sub';s.textContent='👆 Fingerprint unlock works when the diary is opened from its website link on a phone with fingerprint or face lock.';BR.appendChild(s)}
+    renderInstall();renderTrash();renderStorage();
+    const F=$('fonts');F.innerHTML='';
+    Object.entries(FONTS).forEach(([k,f])=>{
+      const b=document.createElement('button');b.className='fontopt';b.setAttribute('aria-pressed',settings.font===k);
+      const s=document.createElement('span');s.className='s';s.style.fontFamily=f.fam;s.textContent='Dear diary…';
+      const l=document.createElement('span');l.className='l';l.textContent=f.name;
+      b.append(s,l);b.onclick=()=>{settings.font=k;saveSettings();applyFont();renderSettings();toast('Font changed')};F.appendChild(b);
+    });
+    const N=$('nbList');N.innerHTML='';
+    settings.notebooks.forEach(nb=>{
+      const row=document.createElement('div');row.className='nbrow';
+      const c=entries.filter(e=>e.notebook===nb.id).length;
+      const t=document.createElement('span');t.textContent=nb.name+' · '+plural(c,'page');row.appendChild(t);
+      if(settings.notebooks.length>1)row.appendChild(removeBtn(()=>{
+        if(entries.some(e=>e.notebook===nb.id)){toast('Move or delete its pages first');renderSettings();return}
+        settings.notebooks=settings.notebooks.filter(x=>x.id!==nb.id);saveSettings();if(nbFilter===nb.id)nbFilter='all';renderSettings();
+      }));
+      N.appendChild(row);
+    });
+    const years=[...new Set(entries.map(e=>e.date.slice(0,4)).concat(String(new Date().getFullYear())))].sort().reverse();
+    $('bookYear').innerHTML='';years.forEach(y=>{const o=document.createElement('option');o.textContent=y;$('bookYear').appendChild(o)});
+    $('bookNb').innerHTML='<option value="all">All notebooks</option>';
+    settings.notebooks.forEach(n=>{const o=document.createElement('option');o.value=n.id;o.textContent=n.name;$('bookNb').appendChild(o)});
+    if(!$('bookDay').value)$('bookDay').value=todayISO();
+  }
+  $('nbAdd').onclick=()=>{
+    const name=$('nbNew').value.trim();if(!name){toast('Type a notebook name');return}
+    if(settings.notebooks.some(n=>n.name.toLowerCase()===name.toLowerCase())){toast('That notebook already exists');return}
+    settings.notebooks.push({id:'nb-'+uid(),name});saveSettings();$('nbNew').value='';toast('Notebook added');renderSettings();
+  };
+  $('bookMode').onchange=()=>{const y=$('bookMode').value==='year';$('bookYear').hidden=!y;$('bookDay').hidden=y};
+  $('bookBtn').onclick=()=>{
+    const nb=$('bookNb').value;let list=entries.filter(e=>nb==='all'||e.notebook===nb);
+    if($('bookMode').value==='year'){
+      const y=$('bookYear').value;list=list.filter(e=>e.date.startsWith(y+'-'));
+      printBook(list,{cover:true,title:'My Diary',sub:y+(nb!=='all'?' · '+nbName(nb):'')});
+    }else{
+      const d=$('bookDay').value;if(!d){toast('Pick a day');return}
+      printBook(list.filter(e=>e.date===d),{cover:false,title:niceDate(d)});
+    }
+  };
+  $('savePin').onclick=()=>{
+    const p=$('newPin').value;if(!/^(\d{4}|\d{6})$/.test(p)){toast('PIN 4 ya 6 digit ka hona chahiye');return}
+    $('savePin').disabled=true;
+    lockKey(p,dek).then(o=>{vault.pin=o;vault.len=p.length;saveVault();$('newPin').value='';toast('Naya PIN save ho gaya 🔐')})
+      .catch(()=>toast('PIN save nahi hua')).finally(()=>{$('savePin').disabled=false});
+  };
+
+  // ---------- printed book ----------
+  function printBook(list,o){
+    if(!list.length){toast('No pages to put in the book');return}
+    const A=$('printArea');A.innerHTML='';
+    if(o.cover){
+      const c=document.createElement('div');c.className='pcover';
+      c.innerHTML='<div class="pheart">♥</div><h1></h1><p class="psub"></p><p class="sub"></p>';
+      c.querySelector('h1').textContent=o.title;c.querySelector('.psub').textContent=o.sub;c.querySelector('.sub').textContent=plural(list.length,'page');
+      A.appendChild(c);
+    }else{const h=document.createElement('h1');h.className='phead';h.textContent=o.title;A.appendChild(h)}
+    list.slice().sort((a,b)=>a.date.localeCompare(b.date)||a.created-b.created).forEach(e=>{
+      const s=document.createElement('section');s.className='pentry'+(o.cover?' newpage':'');
+      const m=document.createElement('div');m.className='pmeta';
+      m.textContent=niceDate(e.date)+' · '+nbName(e.notebook)+(e.rating?' · Day '+e.rating+'/10':'')+(e.fav?' · ⭐':'');
+      const h=document.createElement('h2');h.textContent=e.title||'Untitled page';
+      const b=document.createElement('div');b.className='pbody';b.innerHTML=clean(e.html);
+      s.append(m,h,b);
+      if(e.audio.length){const v=document.createElement('div');v.className='pvoice';v.textContent='🎙️ '+plural(e.audio.length,'voice note')+' recorded on this page';s.appendChild(v)}
+      A.appendChild(s);
+    });
+    const go=()=>setTimeout(()=>{try{window.print()}catch(err){toast('Printing is not available here')}},250);
+    document.fonts&&document.fonts.ready?document.fonts.ready.then(go):go();
+  }
+  window.addEventListener('afterprint',()=>{$('printArea').innerHTML=''});
+
+  // ---------- editor ----------
+  let editId=null,edRating=0,edFav=false,edAudio=[],pendingAudio=[],removedAudio=[],lastRange=null;
+  const STICKERS=['🌸','💖','✨','🌈','🦋','🎀','🍓','☁️','🌙','⭐','🧸','🌻','🍰','🎉','😊','🥰','😂','😴','😭','😤','📚','✈️','☕','🎵','🐱','🐶','🌷','🍕','💪','🙏'];
+  STICKERS.forEach(s=>{const b=document.createElement('button');b.textContent=s;b.setAttribute('aria-label','Add sticker '+s);b.onmousedown=e=>e.preventDefault();b.onclick=()=>addSticker(s);$('stkPal').appendChild(b)});
+  const rateFace=n=>!n?'–':n+'/10 '+(n<=3?'😔':n<=5?'😐':n<=7?'🙂':n<=9?'😊':'🤩');
+  $('edRateIn').addEventListener('input',()=>{edRating=+$('edRateIn').value;paintRate();queueDraft()});
+  function paintRate(){$('edRateIn').value=edRating;$('edRateVal').textContent=rateFace(edRating)}
+  function paintFav(){$('edFav').setAttribute('aria-pressed',edFav);$('edFav').textContent=edFav?'⭐':'☆'}
+  $('edFav').onclick=()=>{edFav=!edFav;paintFav()};
+
+  function openEditor(id,date){
+    $("edBody").dataset.ph="Dear diary…";
+    editId=id;const e=id?entries.find(x=>x.id===id):null;
+    $('edNb').innerHTML='';
+    settings.notebooks.forEach(n=>{const o=document.createElement('option');o.value=n.id;o.textContent=n.name;$('edNb').appendChild(o)});
+    $('edNb').value=e?e.notebook:(nbFilter!=='all'&&nbFilter!=='fav'?nbFilter:settings.notebooks[0].id);
+    $('edDate').value=e?e.date:(date||todayISO());
+    $('edTitle').value=e?e.title:'';
+    $('edBody').innerHTML=e?clean(e.html):'';
+    edRating=e?e.rating:0;edFav=e?e.fav:false;edAudio=e?e.audio.map(a=>({...a})):[];pendingAudio=[];removedAudio=[];lastRange=null;
+    paintRate();paintFav();renderAudio();
+    $('delBtn').hidden=!e;$('delConfirm').hidden=true;$('leaveConfirm').hidden=true;closePanels();
+    TABS.forEach(x=>$('tab-'+x).hidden=true);$('tabs').hidden=true;$('newBtn').hidden=true;
+    $('editor').hidden=false;window.scrollTo(0,0);
+    edSnap=snapshot();
+  }
+  let edSnap='',draftTimer=null;
+  function snapshot(){return JSON.stringify([$('edTitle').value,$('edBody').innerHTML,edRating,edFav,$('edDate').value,$('edNb').value,edAudio.length])}
+  function saveDraft(){
+    if($('editor').hidden||snapshot()===edSnap)return;
+    save(K.draft,{editId,title:$('edTitle').value,html:$('edBody').innerHTML,date:$('edDate').value,notebook:$('edNb').value,
+      rating:edRating,fav:edFav,audio:edAudio,pending:pendingAudio,removed:removedAudio,at:Date.now()});
+  }
+  function queueDraft(){clearTimeout(draftTimer);draftTimer=setTimeout(saveDraft,700)}
+  function clearDraft(){clearTimeout(draftTimer);removeKey(K.draft)}
+  ['edBody','edTitle'].forEach(id=>$(id).addEventListener('input',queueDraft));
+  ['edDate','edNb'].forEach(id=>$(id).addEventListener('change',queueDraft));
+  $('edFav').addEventListener('click',queueDraft);
+  function openDraft(d){
+    const exists=d.editId&&entries.some(x=>x.id===d.editId);
+    openEditor(exists?d.editId:null,d.date);
+    $('edTitle').value=d.title||'';$('edBody').innerHTML=clean(d.html||'');$('edDate').value=d.date||todayISO();
+    if(settings.notebooks.some(n=>n.id===d.notebook))$('edNb').value=d.notebook;
+    edRating=+d.rating||0;edFav=!!d.fav;edAudio=Array.isArray(d.audio)?d.audio:[];pendingAudio=d.pending||[];removedAudio=d.removed||[];
+    paintRate();paintFav();renderAudio();
+  }
+  function closeEditor(){
+    stopRec();stopSpeak();stopAmb();revokeUrls();
+    $('editor').hidden=true;$('tabs').hidden=false;$('newBtn').hidden=false;editId=null;
+    showTab(curTab);
+  }
+  function discardEditor(){
+    if($('editor').hidden)return;
+    pendingAudio.forEach(id=>idb.del('audio',id).catch(()=>{}));pendingAudio=[];
+    clearDraft();closeEditor();
+  }
+  $('newBtn').onclick=()=>openEditor(null);
+  $('cancelBtn').onclick=()=>{
+    if(rec){toast('Stop the recording first');return}
+    if(snapshot()!==edSnap)$('leaveConfirm').hidden=false;else discardEditor();
+  };
+  $('leaveYes').onclick=discardEditor;
+  $('leaveNo').onclick=()=>$('leaveConfirm').hidden=true;
+
+  function saveEntry(){
+    if(rec){toast('Stop the recording first');return null}
+    const html=clean($('edBody').innerHTML),text=plain(html),title=$('edTitle').value.trim();
+    if(!title&&!text&&!edAudio.length){toast('Write or record something first ♥');return null}
+    const data={title,html,text,date:$('edDate').value||todayISO(),notebook:$('edNb').value,rating:edRating,fav:edFav,audio:edAudio.slice(),updated:Date.now()};
+    let e;
+    if(editId){e=entries.find(x=>x.id===editId);Object.assign(e,data)}
+    else{e=Object.assign({id:uid(),created:Date.now()},data);entries.push(e)}
+    if(!persist())return null;
+    removedAudio.forEach(a=>idb.del('audio',a.id).catch(()=>{}));
+    pendingAudio=[];removedAudio=[];clearDraft();
+    return e;
+  }
+  $('saveBtn').onclick=()=>{if(saveEntry()){toast('Saved ♥');closeEditor()}};
+  $('pdfDayBtn').onclick=()=>{
+    const e=saveEntry();if(!e)return;
+    const d=e.date;closeEditor();
+    printBook(entries.filter(x=>x.date===d),{cover:false,title:niceDate(d)});
+  };
+  $('delBtn').onclick=()=>$('delConfirm').hidden=false;
+  $('delNo').onclick=()=>$('delConfirm').hidden=true;
+  $('delYes').onclick=()=>{
+    const e=entries.find(x=>x.id===editId);
+    pendingAudio.forEach(id=>idb.del('audio',id).catch(()=>{}));pendingAudio=[];
+    if(e){trash.push({entry:e,deletedAt:Date.now()});save(K.trash,trash)}
+    entries=entries.filter(x=>x.id!==editId);persist();clearDraft();
+    closeEditor();
+    if(e)snack('Page deleted',()=>{
+      trash=trash.filter(t=>t.entry.id!==e.id);save(K.trash,trash);
+      if(!entries.some(x=>x.id===e.id)){entries.push(e);persist()}
+      toast('Page wapas aa gaya');showTab(curTab);
+    });
+  };
+
+  // secret ink: hidden words that appear when you rub them
+  $('inkBtn').onclick=()=>{
+    restoreSel();
+    const s=getSelection(),ed=$('edBody');
+    for(let n=s.anchorNode;n&&n!==ed;n=n.parentNode){
+      if(n.nodeType===1&&n.classList.contains('ink')){n.replaceWith(...n.childNodes);toast('Secret ink removed');queueDraft();return}
+    }
+    if(!s.rangeCount||s.isCollapsed||!s.toString().trim()){toast('Select some words first, then tap Secret ink');return}
+    const r=s.getRangeAt(0),txt=r.toString();
+    r.deleteContents();
+    const sp=document.createElement('span');sp.className='ink';sp.textContent=txt;r.insertNode(sp);
+    const after=document.createTextNode(' ');sp.after(after);
+    const nr=document.createRange();nr.setStartAfter(after);nr.collapse(true);s.removeAllRanges();s.addRange(nr);
+    toast('Hidden in secret ink 🪄 Rub it to read');queueDraft();
+  };
+  const rubs=new WeakMap();
+  function reveal(t){t.classList.add('show');rubs.set(t,0);clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),5000)}
+  document.addEventListener('pointermove',e=>{
+    const t=e.target.closest&&e.target.closest('.ink');if(!t||t.classList.contains('show'))return;
+    const c=(rubs.get(t)||0)+1;rubs.set(t,c);if(c>10)reveal(t);
+  });
+  document.addEventListener('dblclick',e=>{const t=e.target.closest&&e.target.closest('.ink');if(t)reveal(t)});
+
+  // speak to type (Hindi or English)
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let sr=null;
+  if(!SR){$('speakBtn').hidden=true;$('speakLang').hidden=true}
+  function paintSpeak(){const b=$('speakBtn');b.classList.toggle('recording',!!sr);b.textContent=sr?'⏹':'🗣️'}
+  function stopSpeak(){if(sr){try{sr.stop()}catch(e){}}}
+  $('speakBtn').onclick=()=>{
+    if(sr){stopSpeak();return}
+    const r=new SR();r.lang=$('speakLang').value;r.continuous=true;r.interimResults=false;
+    r.onresult=e=>{
+      for(let i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal){
+        restoreSel();document.execCommand('insertText',false,e.results[i][0].transcript.trim()+' ');queueDraft();
+      }
+    };
+    r.onerror=e=>toast(e.error==='not-allowed'||e.error==='service-not-allowed'?'Microphone permission was not given':e.error==='network'?'Speech typing needs internet':'Could not hear clearly. Try again.');
+    r.onend=()=>{sr=null;paintSpeak()};
+    try{r.start();sr=r;paintSpeak();toast('Listening… speak now')}catch(e){toast('Speech typing could not start')}
+  };
+
+  // formatting
+  document.addEventListener('selectionchange',()=>{
+    const s=getSelection();
+    if(s.rangeCount&&$('edBody').contains(s.anchorNode))lastRange=s.getRangeAt(0).cloneRange();
+  });
+  function restoreSel(){
+    const ed=$('edBody');ed.focus();const s=getSelection();s.removeAllRanges();
+    if(lastRange&&ed.contains(lastRange.startContainer))s.addRange(lastRange);
+    else{const r=document.createRange();r.selectNodeContents(ed);r.collapse(false);s.addRange(r)}
+  }
+  function cmd(c,v){restoreSel();try{document.execCommand('styleWithCSS',false,true)}catch(e){}document.execCommand(c,false,v)}
+  $('toolbar').querySelectorAll('button').forEach(b=>{
+    b.addEventListener('mousedown',e=>e.preventDefault());
+    if(b.dataset.cmd)b.onclick=()=>cmd(b.dataset.cmd);
+    if(b.dataset.color)b.onclick=()=>cmd('foreColor',b.dataset.color);
+    if(b.dataset.hl)b.onclick=()=>{restoreSel();try{document.execCommand('styleWithCSS',false,true)}catch(e){}if(!document.execCommand('hiliteColor',false,b.dataset.hl))document.execCommand('backColor',false,b.dataset.hl)};
+  });
+  const PANELS=[['colBtn','colPal'],['stkBtn','stkPal'],['moreBtn','morePal']];
+  function closePanels(){PANELS.forEach(([b,p])=>{$(p).hidden=true;$(b).setAttribute('aria-expanded','false')})}
+  PANELS.forEach(([b,p])=>{$(b).onclick=()=>{const open=$(p).hidden;closePanels();$(p).hidden=!open;$(b).setAttribute('aria-expanded',open)}});
+  function addSticker(s){restoreSel();document.execCommand('insertHTML',false,'<span class="stk">'+s+'</span>&nbsp;')}
+  $('edBody').addEventListener('paste',e=>{
+    e.preventDefault();const t=(e.clipboardData||window.clipboardData).getData('text/plain');
+    document.execCommand('insertText',false,t);
+  });
+
+  // voice notes
+  let rec=null,recStart=0,recTimer=null,urls=[],audioToken=0;
+  function revokeUrls(){urls.forEach(u=>URL.revokeObjectURL(u));urls=[]}
+  function paintRec(){
+    const b=$('recBtn');
+    if(rec){b.classList.add('recording');b.textContent='⏹ '+fmtDur(Math.round((Date.now()-recStart)/1000))}
+    else{b.classList.remove('recording');b.textContent='🎙️'}
+  }
+  async function startRec(){
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){toast('Voice recording does not work in this browser. Try Chrome or Safari.');return}
+    let stream;
+    try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){toast('Microphone permission was not given');return}
+    const type=['audio/webm','audio/mp4','audio/ogg'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+    const chunks=[];const r=new MediaRecorder(stream,type?{mimeType:type}:undefined);
+    r.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+    r.onstop=async()=>{
+      stream.getTracks().forEach(t=>t.stop());clearInterval(recTimer);
+      const dur=Math.max(1,Math.round((Date.now()-recStart)/1000));rec=null;paintRec();
+      if(!chunks.length){toast('Nothing was recorded');return}
+      const blob=new Blob(chunks,{type:r.mimeType||type||'audio/webm'}),id='a'+uid();
+      try{await idb.put('audio',{id,blob,dur});edAudio.push({id,dur});pendingAudio.push(id);renderAudio();toast('Voice note added')}
+      catch(e){toast('Could not save the voice note')}
+    };
+    rec=r;r.start();recStart=Date.now();recTimer=setInterval(paintRec,500);paintRec();
+  }
+  function stopRec(){if(rec&&rec.state!=='inactive')rec.stop()}
+  $('recBtn').onclick=()=>{rec?stopRec():startRec()};
+  async function renderAudio(){
+    const token=++audioToken;revokeUrls();
+    const L=$('edAudioList');L.innerHTML='';
+    for(const a of edAudio){
+      let r=null;try{r=await idb.get('audio',a.id)}catch(e){}
+      if(token!==audioToken)return;
+      const row=document.createElement('div');row.className='arow';
+      if(r&&r.blob){const au=document.createElement('audio');au.controls=true;au.preload='metadata';const u=URL.createObjectURL(r.blob);urls.push(u);au.src=u;row.appendChild(au)}
+      else{const s=document.createElement('span');s.className='sub';s.textContent='Voice note not found on this phone';row.appendChild(s)}
+      const d=document.createElement('span');d.className='sub';d.textContent='🎙️ '+fmtDur(a.dur||0);
+      const x=document.createElement('button');x.className='ghost';x.textContent='Remove';
+      x.onclick=()=>{
+        edAudio=edAudio.filter(z=>z.id!==a.id);
+        if(pendingAudio.includes(a.id)){idb.del('audio',a.id).catch(()=>{});pendingAudio=pendingAudio.filter(z=>z!==a.id)}else removedAudio.push(a);
+        renderAudio();
+      };
+      row.append(d,x);L.appendChild(row);
+    }
+  }
+
+  // ---------- photo albums ----------
+  let localPhotos=[];
+  async function loadPhotos(){try{localPhotos=await idb.all('photos')||[]}catch(e){localPhotos=[]}}
+  function allPhotos(){
+    const g=(GIFT.photos||[]).map(p=>Object.assign({},p,{gift:true})),ids=new Set(g.map(p=>p.id));
+    return g.concat(localPhotos.filter(p=>!ids.has(p.id)));
+  }
+  function albumsList(){
+    const m=new Map();
+    allPhotos().sort((a,b)=>(a.added||0)-(b.added||0)).forEach(p=>{const k=p.album||'Photos';if(!m.has(k))m.set(k,[]);m.get(k).push(p)});
+    return [...m.entries()].sort((a,b)=>b[0].localeCompare(a[0],undefined,{numeric:true}));
+  }
+  let galView='albums';
+  document.querySelectorAll('#galView [data-view]').forEach(b=>b.onclick=()=>{galView=b.dataset.view;renderGallery()});
+  function seeded(str){let h=1779033703;for(const c of str)h=Math.imul(h^c.charCodeAt(0),3432918353);return()=>{h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return((h^=h>>>16)>>>0)/4294967296}}
+  let zTop=10;
+  function renderWall(photos){
+    const W=$('wall');W.innerHTML='';
+    if(!photos.length){W.innerHTML='<div class="empty"><b>Your wall is empty</b>Add photos and they get pinned here.</div>';W.style.height='';return}
+    const width=W.clientWidth||340,pw=130,ph=172,cols=Math.max(1,Math.floor((width-20)/(pw+14)));
+    let maxY=0;
+    photos.forEach((p,i)=>{
+      const r=seeded(p.id);
+      const pos=wallPos[p.id]||{x:((i%cols)*(pw+14)+12+r()*10)/Math.max(1,width-pw),y:Math.floor(i/cols)*(ph+26)+22+r()*14,r:r()*14-7};
+      const el=document.createElement('div');el.className='pol';
+      el.style.left=Math.min(1,Math.max(0,pos.x))*(width-pw)+'px';el.style.top=pos.y+'px';el.style.transform='rotate('+pos.r.toFixed(1)+'deg)';
+      el.setAttribute('role','button');el.setAttribute('aria-label',p.caption||p.album);
+      const im=document.createElement('img');im.src=p.data;im.alt='';im.draggable=false;
+      const c=document.createElement('div');c.className='c';c.textContent=p.caption||p.album;
+      el.append(im,c);W.appendChild(el);
+      maxY=Math.max(maxY,pos.y+ph+30);
+      el.addEventListener('pointerdown',e=>{
+        e.preventDefault();try{el.setPointerCapture(e.pointerId)}catch(x){}
+        const sx=e.clientX,sy=e.clientY,ox=el.offsetLeft,oy=el.offsetTop;let moved=false;
+        el.classList.add('drag');el.style.zIndex=++zTop;
+        const mv=ev=>{
+          const dx=ev.clientX-sx,dy=ev.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6)moved=true;
+          el.style.left=Math.min(Math.max(0,ox+dx),W.clientWidth-pw)+'px';el.style.top=Math.max(0,oy+dy)+'px';
+        };
+        const up=()=>{
+          el.classList.remove('drag');el.removeEventListener('pointermove',mv);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);
+          if(moved){
+            wallPos[p.id]={x:el.offsetLeft/Math.max(1,W.clientWidth-pw),y:el.offsetTop,r:pos.r};save(K.wall,wallPos);
+            if(el.offsetTop+ph+40>W.clientHeight)W.style.height=(el.offsetTop+ph+40)+'px';
+          }else openLb(photos,i);
+        };
+        el.addEventListener('pointermove',mv);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+      });
+    });
+    W.style.height=Math.max(420,maxY+20)+'px';
+  }
+  async function renderGallery(){
+    await loadPhotos();
+    document.querySelectorAll('#galView [data-view]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===galView));
+    const A=$('albums');A.innerHTML='';const albums=albumsList();
+    $('albumList').innerHTML='';albums.forEach(([n])=>{const o=document.createElement('option');o.value=n;$('albumList').appendChild(o)});
+    A.hidden=galView!=='albums';$('wall').hidden=galView!=='wall';
+    if(galView==='wall'){renderWall(albums.flatMap(([,ps])=>ps));return}
+    if(!albums.length){A.innerHTML='<div class="empty"><b>No photos yet</b>Type an album name, then tap “Add photos”.</div>';return}
+    albums.forEach(([name,photos])=>{
+      const sec=document.createElement('section');sec.className='album';
+      const hd=document.createElement('div');hd.className='album-head';
+      const h=document.createElement('h2');h.textContent=name;
+      const c=document.createElement('span');c.className='sub';c.textContent=plural(photos.length,'photo');
+      hd.append(h,c);
+      const g=document.createElement('div');g.className='thumbs';
+      photos.forEach((p,i)=>{
+        const b=document.createElement('button');b.className='thumb';b.setAttribute('aria-label',p.caption||('Photo '+(i+1)+' from '+name));
+        const im=document.createElement('img');im.src=p.data;im.alt='';im.loading='lazy';
+        b.appendChild(im);b.onclick=()=>openLb(photos,i);g.appendChild(b);
+      });
+      sec.append(hd,g);A.appendChild(sec);
+    });
+  }
+  function compress(file){
+    return new Promise((res,rej)=>{
+      const url=URL.createObjectURL(file),img=new Image();
+      img.onload=()=>{
+        const k=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
+        const c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*k);c.height=Math.round(img.naturalHeight*k);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.82));
+      };
+      img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('unreadable'))};
+      img.src=url;
+    });
+  }
+  $('addPhotosBtn').onclick=()=>{if(!$('albumName').value.trim()){toast('Type an album name first');$('albumName').focus();return}$('photoFile').click()};
+  $('photoFile').onchange=async ev=>{
+    const files=[...ev.target.files];ev.target.value='';if(!files.length)return;
+    const album=$('albumName').value.trim()||'Photos';let ok=0,bad=0;
+    for(let i=0;i<files.length;i++){
+      toast('Adding photo '+(i+1)+' of '+files.length+'…');
+      try{await idb.put('photos',{id:'p'+uid(),album,caption:'',data:await compress(files[i]),added:Date.now()+i});ok++}catch(e){bad++}
+    }
+    toast(plural(ok,'photo')+' added'+(bad?' · '+bad+' could not be opened':''));renderGallery();
+  };
+
+  // photo viewer
+  let lbList=[],lbIdx=0;
+  function openLb(list,i){lbList=list;lbIdx=i;$('lb').hidden=false;document.body.style.overflow='hidden';showLb()}
+  function closeLb(){$('lb').hidden=true;document.body.style.overflow=''}
+  function showLb(){
+    const p=lbList[lbIdx];
+    $('lbImg').src=p.data;$('lbImg').alt=p.caption||p.album;
+    $('lbAlbum').textContent=p.album;$('lbCount').textContent=(lbIdx+1)+' / '+lbList.length;
+    $('lbCaption').hidden=!!p.gift;$('lbCaption').value=p.caption||'';
+    $('lbCapRO').hidden=!p.gift||!p.caption;$('lbCapRO').textContent=p.caption||'';
+    $('lbDel').hidden=!!p.gift;$('lbDelConfirm').hidden=true;
+    $('lbPrev').hidden=$('lbNext').hidden=lbList.length<2;
+  }
+  $('lbClose').onclick=closeLb;
+  $('lbPrev').onclick=()=>{lbIdx=(lbIdx-1+lbList.length)%lbList.length;showLb()};
+  $('lbNext').onclick=()=>{lbIdx=(lbIdx+1)%lbList.length;showLb()};
+  let tx0=null;
+  $('lbStage').addEventListener('touchstart',e=>{tx0=e.touches[0].clientX},{passive:true});
+  $('lbStage').addEventListener('touchend',e=>{if(tx0===null)return;const dx=e.changedTouches[0].clientX-tx0;tx0=null;if(Math.abs(dx)>50&&lbList.length>1)(dx<0?$('lbNext'):$('lbPrev')).click()});
+  $('lbCaption').onchange=async()=>{
+    const p=lbList[lbIdx];p.caption=$('lbCaption').value.trim();
+    try{await idb.put('photos',{id:p.id,album:p.album,caption:p.caption,data:p.data,added:p.added});toast('Caption saved')}catch(e){toast('Could not save caption')}
+  };
+  $('lbDel').onclick=()=>$('lbDelConfirm').hidden=false;
+  $('lbDelNo').onclick=()=>$('lbDelConfirm').hidden=true;
+  $('lbDelYes').onclick=async()=>{
+    const p=lbList[lbIdx],copy={id:p.id,album:p.album,caption:p.caption,data:p.data,added:p.added};
+    try{await idb.del('photos',p.id)}catch(e){}
+    lbList.splice(lbIdx,1);
+    if(!lbList.length)closeLb();else{lbIdx=Math.min(lbIdx,lbList.length-1);showLb()}
+    renderGallery();
+    snack('Photo deleted',async()=>{try{await idb.put('photos',copy);toast('Photo wapas aa gayi')}catch(e){}renderGallery()});
+  };
+
+  // ---------- copy with photos ----------
+  $('giftBtn').onclick=async()=>{
+    await loadPhotos();
+    const photos=allPhotos().map(p=>({id:p.id,album:p.album,caption:p.caption||'',data:p.data,added:p.added||0}));
+    if(!photos.length){toast('Add some photos first');return}
+    const json=JSON.stringify({photos}).replace(/</g,'\\u003c');
+    const html=SRC.replace(/(<script id="giftData" type="application\/json">)[\s\S]*?(<\/script>)/,(m,a,b)=>a+json+b);
+    download(html,'my-diary-with-photos.html','text/html');toast('Copy created with '+plural(photos.length,'photo'));
+  };
+
+  // ---------- backup (locked with its own password) ----------
+  $('exportBtn').onclick=async()=>{
+    const pw=$('bkPw').value;
+    if(pw.length<6){toast('Backup password kam se kam 6 letters ka rakho');$('bkPw').focus();return}
+    if(pw!==$('bkPw2').value){toast('Dono passwords match nahi hue');$('bkPw2').focus();return}
+    $('exportBtn').disabled=true;toast('Backup ban raha hai… 🔐');
+    try{
+      await flush();await loadPhotos();
+      let audio=[];
+      try{audio=await Promise.all((await idb.all('audio')||[]).map(async a=>({id:a.id,dur:a.dur,data:await blobToData(a.blob)})))}catch(e){}
+      const data={app:'my-diary',version:5,exported:new Date().toISOString(),entries,settings,countdowns,dates:impDates,lines,trash,photos:localPhotos,audio,room:rawLoad(K.room,null)};
+      const salt=rand(16),key=await kekFrom(pw,salt,ITER),{iv,ct}=await encB(te.encode(JSON.stringify(data)),key);
+      download(JSON.stringify({app:'my-diary',version:5,locked:true,salt:b64e(salt),iter:ITER,iv:b64e(iv),ct:b64e(ct)}),'my-diary-backup-'+todayISO()+'.json','application/json');
+      $('bkPw').value='';$('bkPw2').value='';
+      settings.lastBackup=Date.now();saveSettings();toast('Locked backup download ho gaya 🔐');if(curTab==='list')renderBanners();
+    }catch(e){toast('Backup nahi ban paya')}
+    $('exportBtn').disabled=false;
+  };
+  $('importBtn').onclick=()=>$('importFile').click();
+  let lockedFile=null;
+  $('importFile').onchange=ev=>{
+    const f=ev.target.files[0];if(!f)return;const r=new FileReader();
+    r.onload=async()=>{
+      ev.target.value='';
+      let data;try{data=JSON.parse(r.result)}catch(e){toast('Yeh diary ka backup nahi hai');return}
+      if(data&&data.locked){lockedFile=data;$('rsBox').hidden=false;$('rsPw').value='';$('rsPw').focus();return}
+      importData(data);
+    };
+    r.readAsText(f);
+  };
+  $('rsGo').onclick=async()=>{
+    if(!lockedFile)return;
+    $('rsGo').disabled=true;$('rsGo').textContent='Khul raha hai…';
+    try{
+      const key=await kekFrom($('rsPw').value,b64d(lockedFile.salt),lockedFile.iter||ITER);
+      const data=JSON.parse(tdc.decode(await decB(b64d(lockedFile.iv),b64d(lockedFile.ct),key)));
+      lockedFile=null;$('rsBox').hidden=true;$('rsPw').value='';
+      await importData(data);
+    }catch(e){toast('Password galat hai')}
+    $('rsGo').disabled=false;$('rsGo').textContent='Restore';
+  };
+  $('rsPw').onkeydown=e=>{if(e.key==='Enter')$('rsGo').click()};
+  async function importData(data){
+      try{
+        const list=Array.isArray(data)?data:data.entries;
+        if(!Array.isArray(list))throw 0;
+        if(data.settings&&Array.isArray(data.settings.notebooks))data.settings.notebooks.forEach(n=>{if(n&&n.id&&n.name&&!settings.notebooks.some(x=>x.id===n.id))settings.notebooks.push({id:String(n.id),name:String(n.name)})});
+        saveSettings();
+        const ids=new Set(entries.map(e=>e.id));let added=0,pics=0,voices=0;
+        list.forEach(e=>{if(e&&e.id&&/^\d{4}-\d{2}-\d{2}$/.test(e.date)&&!ids.has(e.id)){entries.push(migrate(Object.assign({},e)));added++}});
+        persist();
+        const mergeBy=(cur,inc,fix)=>{const s=new Set(cur.map(x=>x.id));(Array.isArray(inc)?inc:[]).forEach(x=>{if(x&&x.id&&x.date&&!s.has(x.id))cur.push(fix(x))});return cur};
+        countdowns=mergeBy(countdowns,data.countdowns,x=>({id:String(x.id),title:String(x.title||''),date:x.date,emoji:String(x.emoji||'🎉')}));save(K.cd,countdowns);
+        if(data.lines&&typeof data.lines==='object')Object.entries(data.lines).forEach(([md,ys])=>{
+          if(!/^\d{2}-\d{2}$/.test(md)||!ys||typeof ys!=='object')return;lines[md]=lines[md]||{};
+          Object.entries(ys).forEach(([y,v])=>{if(/^\d{4}$/.test(y)&&typeof v==='string'&&!lines[md][y])lines[md][y]=v.slice(0,200)});
+        });
+        save(K.lines,lines);
+        impDates=mergeBy(impDates,data.dates,x=>({id:String(x.id),name:String(x.name||''),date:x.date,type:['Birthday','Anniversary','Other'].includes(x.type)?x.type:'Other',hasYear:!!x.hasYear}));save(K.dates,impDates);
+        if(data.room&&data.room.pin&&!rawLoad(K.room,null))rawSave(K.room,data.room);
+        if(Array.isArray(data.photos)){
+          await loadPhotos();const have=new Set(localPhotos.map(p=>p.id));
+          for(const p of data.photos)if(p&&p.id&&typeof p.data==='string'&&p.data.startsWith('data:image/')&&!have.has(p.id)){await idb.put('photos',{id:String(p.id),album:String(p.album||'Photos'),caption:String(p.caption||''),data:p.data,added:p.added||0});pics++}
+        }
+        if(Array.isArray(data.audio)){
+          for(const a of data.audio)if(a&&a.id&&typeof a.data==='string'&&a.data.startsWith('data:audio/')){
+            try{if(!(await idb.get('audio',a.id))){const blob=await (await fetch(a.data)).blob();await idb.put('audio',{id:String(a.id),blob,dur:+a.dur||0});voices++}}catch(e){}
+          }
+        }
+        toast('Restored '+plural(added,'page')+(pics?', '+plural(pics,'photo'):'')+(voices?', '+plural(voices,'voice note'):''));
+        showTab('list');
+      }catch(err){toast('Yeh diary ka backup nahi hai')}
+  }
+
+  // ---------- undo bar ----------
+  let snackT=null;
+  function snack(msg,undo){
+    const s=$('snack');$('snackTxt').textContent=msg;s.hidden=false;clearTimeout(snackT);
+    $('snackBtn').onclick=()=>{s.hidden=true;clearTimeout(snackT);undo()};
+    snackT=setTimeout(()=>{s.hidden=true},5000);
+  }
+
+
+  // ---------- storage meter ----------
+  async function renderStorage(){
+    const t=[];const mb=x=>x>=1e9?(x/1e9).toFixed(1)+' GB':(x/1e6).toFixed(1)+' MB';
+    try{if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();t.push('💾 Use ho raha: '+mb(e.usage||0)+(e.quota?' (phone me '+mb(e.quota)+' tak jagah)':''))}}catch(e){}
+    try{if(navigator.storage&&navigator.storage.persisted){t.push((await navigator.storage.persisted())?'✓ Protected: browser apne aap data nahi mitayega':'⚠️ Abhi protected nahi. App install karne se data hamesha safe rahega.')}}catch(e){}
+    t.push('🔐 Pages, lines, dates, photos aur voice notes PIN se encrypted hain.');
+    $('storeInfo').textContent=t.join('\n');
+  }
+
+  // ---------- welcome tour ----------
+  const TOUR=[
+    ['🔐','Yeh diary sirf tumhari hai','Jo bhi likhogi, photos aur voice notes bhi, sab tumhare PIN se lock hokar sirf is phone me rehta hai. PIN ke bina koi nahi padh sakta.'],
+    ['✍️','Apne andaaz me likho','Neeche ＋ dabao. 🎨 se rang aur highlighter, 🌸 se stickers, aur 🪄 se koi line chhupa do, jo ungli se ghisne pe hi dikhegi.'],
+    ['🗣️','Bolo, sunao, mehsoos karo','🗣️ se bol ke likho, 🎙️ se voice note rakho, aur ⋯ me baarish ya samundar ki aawaz lagao.'],
+    ['📌','Yaadein sambhalo','Roz ek line likho jo har saal wapas aayegi. Photos ki polaroid wall banao, aur Dates me countdowns aur birthdays rakho.'],
+    ['🤫','Ek raaz','Diary ke cover pe ♥ ko jaldi-jaldi 3 baar tap karna. Ek chhupa hua kamra khulega, apne alag PIN ke saath.'],
+    ['❓','Bas ek kaam','More me jaake secret question set kar lo, taaki PIN bhoolne pe bhi diary khul sake.']
+  ];
+  let tIdx=0;
+  let askName=false;
+  function showTour(){askName=!settings.name;tIdx=askName?-1:0;$('tour').hidden=false;paintTour()}
+  function paintTour(){
+    const named=tIdx<0;
+    const [i,t,x]=named?['👋','Hi! Tumhara naam kya hai?','Diary tumhe isi naam se bulayegi, jaise “Good morning, …” ☀️']:TOUR[tIdx];
+    $('tIco').textContent=i;$('tTitle').textContent=t;$('tText').textContent=x;
+    $('tName').hidden=!named;if(named)setTimeout(()=>$('tName').focus(),80);
+    $('tDots').innerHTML='';TOUR.forEach((_,k)=>{const d=document.createElement('i');if(k===tIdx)d.className='on';$('tDots').appendChild(d)});
+    $('tDots').hidden=named;
+    $('tNext').textContent=tIdx===TOUR.length-1?'Shuru karo ♥':'Aage ›';$('tSkip').hidden=named||tIdx===TOUR.length-1;
+  }
+  function endTour(){$('tour').hidden=true;settings.tourDone=true;saveSettings()}
+  $('tNext').onclick=()=>{
+    if(tIdx<0){const n=$('tName').value.trim();if(!n){toast('Apna naam likho ♥');$('tName').focus();return}settings.name=n;saveSettings();paintHello();toast('Hi '+n+'! 🌸')}
+    if(tIdx<TOUR.length-1){tIdx++;paintTour()}else endTour();
+  };
+  $('tName').onkeydown=e=>{if(e.key==='Enter')$('tNext').click()};
+  $('tSkip').onclick=endTour;
+  $('tourBtn').onclick=showTour;
+
+  // ---------- secret room (its own key, its own PIN, never in search, lists or tours of the diary) ----------
+  let rdek=null,roomNotes=[],rmEdit=null;
+  function openRoom(){
+    $('lock').hidden=true;document.querySelector('body > .wrap').hidden=true;$('room').hidden=false;$('roomMain').hidden=true;$('roomAuth').hidden=false;window.scrollTo(0,0);
+    const r=rawLoad(K.room,null);
+    $('rmPin2').hidden=!!r;
+    $('rmSub').textContent=r?'Apna secret PIN daalo.':'Yeh ek chhupa hua kamra hai 🤫 Iska alag PIN banao (4 se 8 digit). Yaad rakhna, yeh PIN kabhi reset nahi ho sakta.';
+    $('rmGo').textContent=r?'Andar chalo':'PIN banao';
+    $('rmMsg').textContent='';$('rmPin').value='';$('rmPin2').value='';lastAct=Date.now();
+    setTimeout(()=>$('rmPin').focus(),60);
+  }
+  $('rmBack').onclick=()=>location.reload();
+  $('rmGo').onclick=async()=>{
+    const w=gwait('room');if(w){$('rmMsg').textContent=waitText(w);return}
+    const p=$('rmPin').value;if(!/^\d{4,8}$/.test(p)){$('rmMsg').textContent='PIN 4 se 8 digit ka hona chahiye';return}
+    let r=rawLoad(K.room,null);
+    $('rmGo').disabled=true;$('rmMsg').textContent='';
+    try{
+      if(!r){
+        if(p!==$('rmPin2').value){$('rmMsg').textContent='Dono PIN match nahi hue';return}
+        rdek=await newKey();r={v:1,pin:await lockKey(p,rdek),data:await encJ([],rdek)};rawSave(K.room,r);roomNotes=[];
+      }else{
+        try{rdek=await openKey(p,r.pin)}catch(e){rdek=null}
+        if(!rdek){const x=gfail('room');$('rmMsg').textContent=x.u>Date.now()?waitText(gwait('room')):'Galat PIN';return}
+        gok('room');roomNotes=await decJ(r.data,rdek);
+      }
+      $('rmPin').value='';$('rmPin2').value='';
+      $('roomAuth').hidden=true;$('roomMain').hidden=false;renderRoom();
+    }finally{$('rmGo').disabled=false}
+  };
+  $('rmPin').onkeydown=$('rmPin2').onkeydown=e=>{if(e.key==='Enter')$('rmGo').click()};
+  async function saveRoom(){const r=rawLoad(K.room,null);r.data=await encJ(roomNotes,rdek);if(!rawSave(K.room,r))throw 0}
+  function renderRoom(){
+    const L=$('rmList');L.innerHTML='';$('rmEd').hidden=true;$('rmNew').hidden=false;L.hidden=false;
+    if(!roomNotes.length){L.innerHTML='<div class="empty"><b>Abhi koi raaz nahi</b>Upar wale card se pehla secret page likho.</div>';return}
+    roomNotes.slice().sort((a,b)=>b.at-a.at).forEach(n=>{
+      const b=document.createElement('button');b.className='entry';
+      const d=document.createElement('div');d.className='d';d.textContent=new Date(n.at).toLocaleDateString(undefined,{day:'numeric',month:'long',year:'numeric'});
+      const t=document.createElement('div');t.className='t';t.textContent=n.title||'Untitled';
+      const x=document.createElement('div');x.className='p';x.textContent=n.text;
+      b.append(d,t,x);b.onclick=()=>editRoom(n.id);L.appendChild(b);
+    });
+  }
+  function editRoom(id){
+    rmEdit=id;const n=id?roomNotes.find(x=>x.id===id):null;
+    $('rmTitle').value=n?n.title:'';$('rmText').value=n?n.text:'';
+    $('rmDel').hidden=!n;$('rmDelConfirm').hidden=true;
+    $('rmEd').hidden=false;$('rmList').hidden=true;$('rmNew').hidden=true;$('rmText').focus();
+  }
+  $('rmNew').onclick=()=>editRoom(null);
+  $('rmCancel').onclick=renderRoom;
+  $('rmSave').onclick=async()=>{
+    const title=$('rmTitle').value.trim(),text=$('rmText').value;
+    if(!title&&!text.trim()){toast('Pehle kuch likho');return}
+    if(rmEdit)Object.assign(roomNotes.find(x=>x.id===rmEdit),{title,text,at:Date.now()});
+    else roomNotes.push({id:uid(),title,text,at:Date.now()});
+    try{await saveRoom();toast('Raaz safe hai 🤫');renderRoom()}catch(e){toast('Save nahi hua')}
+  };
+  $('rmDel').onclick=()=>$('rmDelConfirm').hidden=false;
+  $('rmDelNo').onclick=()=>$('rmDelConfirm').hidden=true;
+  $('rmDelYes').onclick=async()=>{roomNotes=roomNotes.filter(x=>x.id!==rmEdit);try{await saveRoom()}catch(e){}toast('Delete ho gaya');renderRoom()};
+  $('rmLock').onclick=()=>lockNow();
+
+  applyFont();
+  paintHello();
+  setupLock();
+  if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
