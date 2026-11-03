@@ -92,12 +92,12 @@
 
   /* Inside = app style: home cards + bottom bar */
   .iconbtn{width:44px;height:44px;padding:0;border-radius:14px;background:var(--paper);box-shadow:0 2px 0 var(--line);font-size:1.15rem}
-  .today{width:100%;text-align:left;display:grid;gap:6px;border-radius:24px;padding:18px;color:#fff;
+  .todaycard{width:100%;text-align:left;display:grid;gap:6px;border-radius:24px;padding:18px;color:#fff;
     background:linear-gradient(135deg,#e8638c,#f08fae);box-shadow:0 10px 24px rgba(232,99,140,.35);margin-bottom:12px}
-  .today:hover{transform:translateY(-2px)}
-  .today small{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
-  .today b{font-family:var(--hand);font-size:1.9rem;line-height:1.05;font-weight:700}
-  .today span{justify-self:start;background:rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-weight:800;font-size:.88rem}
+  .todaycard:hover{transform:translateY(-2px)}
+  .todaycard small{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+  .todaycard b{font-family:var(--hand);font-size:1.9rem;line-height:1.05;font-weight:700}
+  .todaycard span{justify-self:start;background:rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-weight:800;font-size:.88rem}
   .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
   .qtile{background:var(--paper);border-radius:20px;padding:12px 14px;text-align:left;display:grid;gap:4px;align-content:start;font-weight:400;box-shadow:0 4px 14px rgba(232,99,140,.1);min-width:0}
   .qtile small{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
@@ -185,7 +185,7 @@
 
   /* Calendar + heatmap */
   .calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+  .grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center;min-width:0}
   .grid .wd{font-size:.75rem;color:var(--muted);font-weight:700;text-transform:uppercase}
   .day{aspect-ratio:1;border-radius:12px;padding:0;background:transparent;font-weight:600;position:relative;max-width:100%}
   .day.has{background:var(--rose-soft)}
@@ -400,7 +400,7 @@
     <!-- Home -->
     <div id="tab-list">
       <div id="banners"></div>
-      <button class="today" id="todayCard">
+      <button class="todaycard" id="todayCard">
         <small>Aaj ka sawaal</small>
         <b id="prompt"></b>
         <span>✍️ Likhna shuru karo</span>
@@ -727,7 +727,7 @@
       <div><div class="hello">Sirf tumhare liye 🤫</div><h1>Secret room</h1></div>
       <button class="iconbtn" id="rmLock" aria-label="Leave secret room">🔒</button>
     </header>
-    <button class="today" id="rmNew"><small>Raaz ki baat</small><b>Kuch likhna hai jo kisi ko nahi batana?</b><span>✍️ Naya secret page</span></button>
+    <button class="todaycard" id="rmNew"><small>Raaz ki baat</small><b>Kuch likhna hai jo kisi ko nahi batana?</b><span>✍️ Naya secret page</span></button>
     <div class="list" id="rmList"></div>
     <div class="card editor" id="rmEd" hidden>
       <input id="rmTitle" class="titlein" placeholder="Title…" maxlength="120">
